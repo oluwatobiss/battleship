@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+main {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+}
+
+#info-area {
+    background-color: gainsboro;
+    width: 50%;
+    margin: 0 auto 20px;
+    border: 1px solid darkgrey;
+    border-radius: 2px;
+}
+
+#grid-area {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.board-n-ships {
+    display: grid;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+}
+
+.cell {
+    box-shadow: 1px 0 0 0 darkgrey,
+    0 1px 0 0 darkgrey,
+    1px 1px 0 0 darkgrey,
+    inset 1px 1px 0 0 darkgrey;
+}
+
+.ship-dock {
+    margin-top: 20px;
+    width: 50%;
+    height: 20px;
+    display: grid;
+    justify-self: center;
+    grid-template-columns: 3.5fr 2.3fr 1.6fr 1.6fr 1fr;
+    grid-gap: 3px;
+}
+
+.ship {
+    background-color: lightgrey;
+}
+
+#footer {
+    padding: 0 50px;
+    display: flex;
+    justify-content: space-between;
+}

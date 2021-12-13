@@ -1,6 +1,6 @@
 function Footer() {
     return (
-        <div>
+        <div id="footer">
             <p>Created by Oluwatobi Sofela</p>
             <p>About the Game</p>
         </div>

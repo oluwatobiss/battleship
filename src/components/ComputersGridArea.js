@@ -3,9 +3,10 @@ import Battleships from "./Battleships";
 
 function ComputersGridArea() {
     return (
-        <div>
-            <GameBoard />
-            <Battleships />
+        <div className="board-n-ships">
+            <GameBoard boardOwner="pc-board" />
+            <Battleships shipOwner="pc-ships" />
+            <p>Computer's Battleships</p>
         </div>
     )
 }
