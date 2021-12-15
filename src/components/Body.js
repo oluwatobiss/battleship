@@ -1,7 +1,37 @@
 import {useEffect} from "react";
+import interact from 'interactjs';
 import UsersGridArea from "./UsersGridArea";
 import ComputersGridArea from "./ComputersGridArea";
 import GameButton from "./GameButton";
+
+const position = { x: 0, y: 0 };
+  
+interact('#test-ship').draggable({
+  listeners: {
+    start (event) {
+      console.log(event.type, event.target)
+    },
+    move (event) {
+        position.x += event.dx
+        position.y += event.dy
+        
+        event.target.style.transform =
+        `translate(${position.x}px, ${position.y}px)`
+    },
+  },
+
+  modifiers: [
+    interact.modifiers.restrictRect({
+      restriction: '.users-board',
+    }),
+
+    interact.modifiers.snap({ 
+        targets: [interact.snappers.grid({ x: 40, y: 40 })],
+        relativePoints: [{ x: 0, y: 0 }],
+        offset: 'self',
+    })
+  ]
+})
 
 function Body() {
     useEffect(() => {
