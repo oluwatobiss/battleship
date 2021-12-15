@@ -28,9 +28,12 @@ main {
     display: grid;
     grid-template-columns: repeat(10, 40px);
     grid-template-rows: repeat(10, 40px);
+    touch-action: none;
+    user-select: none;
 }
 
 .cell {
+    position: relative;
     box-shadow: 1px 0 0 0 darkgrey,
     0 1px 0 0 darkgrey,
     1px 1px 0 0 darkgrey,
@@ -47,7 +50,7 @@ main {
     grid-gap: 3px;
 }
 
-.ship {
+.ship-in-docking-area {
     background-color: lightgrey;
 }
 
@@ -55,4 +58,12 @@ main {
     padding: 0 50px;
     display: flex;
     justify-content: space-between;
+}
+
+#test-ship {
+    background-color: chocolate;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
 }

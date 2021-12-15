@@ -18,6 +18,14 @@ function Body() {
                 ? cell.setAttribute("id", `pc-cell-${i + 1}`)
                 : cell.setAttribute("id", `user-cell-${i + 1}`);
 
+                if (i === 0 && board.classList.contains("users-board")) {
+                    const ship = document.createElement('div');
+                    ship.setAttribute("id", "test-ship");
+                    ship.style.width = "160px";
+                    ship.style.height = "40px";
+                    cell.appendChild(ship);
+                }
+
                 board.appendChild(cell);
             }
         });
@@ -25,7 +33,7 @@ function Body() {
         [...battleshipDock].forEach(dock => {
             for(let i = 0; i < 5; i++) {
                 const ship = document.createElement('div');
-                ship.classList.add("ship");
+                ship.classList.add("ship-in-docking-area");
                 dock.appendChild(ship);
             }
         });
