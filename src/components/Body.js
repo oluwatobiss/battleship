@@ -6,26 +6,25 @@ import GameButton from "./GameButton";
 
 const position = { x: 0, y: 0 };
 
-function changeOrientation(event) {
-    console.log(event.target);
-    if (event.target.dataset.orientation === "h") {
-        event.target.dataset.orientation = "v";
-        event.target.style.width = "40px";
-        event.target.style.height = "160px";
+function changeOrientation(e) {
+    if (e.target.dataset.orientation === "h") {
+        e.target.dataset.orientation = "v";
+        e.target.style.width = "40px";
+        e.target.style.height = "160px";
     } else {
-        event.target.dataset.orientation = "h";
-        event.target.style.width = "160px";
-        event.target.style.height = "40px";
+        e.target.dataset.orientation = "h";
+        e.target.style.width = "160px";
+        e.target.style.height = "40px";
     }
 }
   
 interact('#test-ship').draggable({
   listeners: {
-    move (event) {
-        position.x += event.dx
-        position.y += event.dy
+    move (e) {
+        position.x += e.dx
+        position.y += e.dy
         
-        event.target.style.transform =
+        e.target.style.transform =
         `translate(${position.x}px, ${position.y}px)`
     },
   },
@@ -49,16 +48,25 @@ function Body() {
         const battleshipDock = document.getElementsByClassName("ship-dock");
 
         [...gameBoard].forEach(board => {
-            for(let i = 0; i < 100; i++) {
+            for (let i = 0; i < 121; i++) {
                 const cell = document.createElement('div');
 
                 cell.classList.add("cell");
 
                 board.classList.contains("pc-board")
-                ? cell.setAttribute("id", `pc-cell-${i + 1}`)
-                : cell.setAttribute("id", `user-cell-${i + 1}`);
+                ? cell.setAttribute("id", `pc-cell-${i}`)
+                : cell.setAttribute("id", `user-cell-${i}`);
 
-                if (i === 0 && board.classList.contains("users-board")) {
+                if (i > 0 && i < 11) {
+                    const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+                    cell.append(letters[i]);
+                }
+
+                if (/^11$|22|33|44|55|66|77|88|99|110/.test(i.toString())) {
+                    cell.append(i.toString().slice(1));
+                }
+
+                if (i === 12 && board.classList.contains("users-board")) {
                     const ship = document.createElement('div');
                     ship.setAttribute("id", "test-ship");
                     ship.setAttribute("data-orientation", "h");

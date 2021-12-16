@@ -26,13 +26,14 @@ main {
 
 .game-board {
     display: grid;
-    grid-template-columns: repeat(10, 40px);
-    grid-template-rows: repeat(10, 40px);
+    grid-template-columns: repeat(11, 40px);
+    grid-template-rows: repeat(11, 40px);
     touch-action: none;
     user-select: none;
 }
 
 .cell {
+    line-height: 40px;
     position: relative;
     box-shadow: 1px 0 0 0 darkgrey,
     0 1px 0 0 darkgrey,
