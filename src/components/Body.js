@@ -5,12 +5,22 @@ import ComputersGridArea from "./ComputersGridArea";
 import GameButton from "./GameButton";
 
 const position = { x: 0, y: 0 };
+
+function changeOrientation(event) {
+    console.log(event.target);
+    if (event.target.dataset.orientation === "h") {
+        event.target.dataset.orientation = "v";
+        event.target.style.width = "40px";
+        event.target.style.height = "160px";
+    } else {
+        event.target.dataset.orientation = "h";
+        event.target.style.width = "160px";
+        event.target.style.height = "40px";
+    }
+}
   
 interact('#test-ship').draggable({
   listeners: {
-    start (event) {
-      console.log(event.type, event.target)
-    },
     move (event) {
         position.x += event.dx
         position.y += event.dy
@@ -51,6 +61,7 @@ function Body() {
                 if (i === 0 && board.classList.contains("users-board")) {
                     const ship = document.createElement('div');
                     ship.setAttribute("id", "test-ship");
+                    ship.setAttribute("data-orientation", "h");
                     ship.style.width = "160px";
                     ship.style.height = "40px";
                     cell.appendChild(ship);
@@ -67,6 +78,9 @@ function Body() {
                 dock.appendChild(ship);
             }
         });
+
+        document.getElementById("test-ship").addEventListener("dblclick", changeOrientation);
+        return () => document.getElementById("test-ship").removeEventListener("dblclick", changeOrientation);
     }, []);
 
     return (
