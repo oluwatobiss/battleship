@@ -31,7 +31,7 @@ interact('#test-ship').draggable({
 
   modifiers: [
     interact.modifiers.restrictRect({
-      restriction: '.users-board',
+      restriction: '.users-water',
     }),
 
     interact.modifiers.snap({ 
@@ -45,17 +45,13 @@ interact('#test-ship').draggable({
 function Body() {
     useEffect(() => {
         const gameBoard = document.getElementsByClassName("game-board");
+        const gameWater = document.getElementsByClassName("game-water");
         const battleshipDock = document.getElementsByClassName("ship-dock");
 
         [...gameBoard].forEach(board => {
             for (let i = 0; i < 121; i++) {
                 const cell = document.createElement('div');
-
-                cell.classList.add("cell");
-
-                board.classList.contains("pc-board")
-                ? cell.setAttribute("id", `pc-cell-${i}`)
-                : cell.setAttribute("id", `user-cell-${i}`);
+                cell.classList.add("coordinate");
 
                 if (i > 0 && i < 11) {
                     const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
@@ -66,7 +62,20 @@ function Body() {
                     cell.append(i.toString().slice(1));
                 }
 
-                if (i === 12 && board.classList.contains("users-board")) {
+                board.appendChild(cell);
+            }
+        });
+
+        [...gameWater].forEach(board => {
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add("cell");
+
+                board.classList.contains("pc-water")
+                ? cell.setAttribute("id", `pc-cell-${i}`)
+                : cell.setAttribute("id", `user-cell-${i}`);
+
+                if (i === 0 && board.classList.contains("users-water")) {
                     const ship = document.createElement('div');
                     ship.setAttribute("id", "test-ship");
                     ship.setAttribute("data-orientation", "h");

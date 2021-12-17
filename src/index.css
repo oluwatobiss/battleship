@@ -25,9 +25,28 @@ main {
 }
 
 .game-board {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(11, 40px);
     grid-template-rows: repeat(11, 40px);
+    touch-action: none;
+    user-select: none;
+}
+
+.coordinate {
+    line-height: 40px;
+}
+
+.game-water {
+    width: 400px;
+    height: 400px;
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
     touch-action: none;
     user-select: none;
 }
