@@ -62,18 +62,21 @@ function createWaterCells() {
             ? cell.setAttribute("id", `pc-cell-${i}`)
             : cell.setAttribute("id", `user-cell-${i}`);
 
-            if (i === 0 && board.classList.contains("users-water")) {
-                const ship = document.createElement('div');
-                ship.setAttribute("id", "test-ship");
-                ship.setAttribute("data-orientation", "h");
-                ship.style.width = "160px";
-                ship.style.height = "40px";
-                cell.appendChild(ship);
-            }
-
             board.appendChild(cell);
         }
     });
+}
+
+function placeShipInUsersWater() {
+    const randomNum = Math.floor(Math.random() * 100);
+    const usersWaterCell = document.getElementsByClassName("users-water")[0].children[randomNum];
+    const ship = document.createElement('div');
+    
+    ship.setAttribute("id", "test-ship");
+    ship.setAttribute("data-orientation", "h");
+    ship.style.width = "160px";
+    ship.style.height = "40px";
+    usersWaterCell.appendChild(ship);
 }
 
 function createShipInDockArea() {
@@ -103,6 +106,7 @@ function Body() {
     useEffect(() => {
         createGameBoardCoordinate();
         createWaterCells();
+        placeShipInUsersWater();
         createShipInDockArea();
 
         document.getElementById("test-ship").addEventListener("dblclick", changeOrientation);
