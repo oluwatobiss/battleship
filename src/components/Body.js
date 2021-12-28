@@ -6,6 +6,87 @@ import GameButton from "./GameButton";
 
 const position = { x: 0, y: 0 };
 
+interact('#test-ship').draggable({
+    listeners: {
+      move (e) {
+          position.x += e.dx
+          position.y += e.dy
+          
+          e.target.style.transform =
+          `translate(${position.x}px, ${position.y}px)`
+      },
+    },
+  
+    modifiers: [
+      interact.modifiers.restrictRect({
+        restriction: '.users-water',
+      }),
+  
+      interact.modifiers.snap({ 
+          targets: [interact.snappers.grid({ x: 40, y: 40 })],
+          relativePoints: [{ x: 0, y: 0 }],
+          offset: 'self',
+      })
+    ]
+});
+
+function createGameBoardCoordinate() {
+    const gameBoard = document.getElementsByClassName("game-board");
+    [...gameBoard].forEach(board => {
+        for (let i = 0; i < 121; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add("coordinate");
+
+            if (i > 0 && i < 11) {
+                const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+                cell.append(letters[i]);
+            }
+
+            if (/^11$|22|33|44|55|66|77|88|99|110/.test(i.toString())) {
+                cell.append(i.toString().slice(1));
+            }
+
+            board.appendChild(cell);
+        }
+    });
+}
+
+function createWaterCells() {
+    const gameWater = document.getElementsByClassName("game-water");
+    [...gameWater].forEach(board => {
+        for (let i = 0; i < 100; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add("cell");
+
+            board.classList.contains("pc-water")
+            ? cell.setAttribute("id", `pc-cell-${i}`)
+            : cell.setAttribute("id", `user-cell-${i}`);
+
+            if (i === 0 && board.classList.contains("users-water")) {
+                const ship = document.createElement('div');
+                ship.setAttribute("id", "test-ship");
+                ship.setAttribute("data-orientation", "h");
+                ship.style.width = "160px";
+                ship.style.height = "40px";
+                cell.appendChild(ship);
+            }
+
+            board.appendChild(cell);
+        }
+    });
+}
+
+function createShipInDockArea() {
+    const battleshipDock = document.getElementsByClassName("ship-dock");
+    [...battleshipDock].forEach(dock => {
+        for(let i = 0; i < 5; i++) {
+            const ship = document.createElement('div');
+            ship.classList.add("ship-in-docking-area");
+            dock.appendChild(ship);
+        }
+    });
+}
+
 function changeOrientation(e) {
     if (e.target.dataset.orientation === "h") {
         e.target.dataset.orientation = "v";
@@ -17,84 +98,12 @@ function changeOrientation(e) {
         e.target.style.height = "40px";
     }
 }
-  
-interact('#test-ship').draggable({
-  listeners: {
-    move (e) {
-        position.x += e.dx
-        position.y += e.dy
-        
-        e.target.style.transform =
-        `translate(${position.x}px, ${position.y}px)`
-    },
-  },
-
-  modifiers: [
-    interact.modifiers.restrictRect({
-      restriction: '.users-water',
-    }),
-
-    interact.modifiers.snap({ 
-        targets: [interact.snappers.grid({ x: 40, y: 40 })],
-        relativePoints: [{ x: 0, y: 0 }],
-        offset: 'self',
-    })
-  ]
-})
 
 function Body() {
     useEffect(() => {
-        const gameBoard = document.getElementsByClassName("game-board");
-        const gameWater = document.getElementsByClassName("game-water");
-        const battleshipDock = document.getElementsByClassName("ship-dock");
-
-        [...gameBoard].forEach(board => {
-            for (let i = 0; i < 121; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add("coordinate");
-
-                if (i > 0 && i < 11) {
-                    const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-                    cell.append(letters[i]);
-                }
-
-                if (/^11$|22|33|44|55|66|77|88|99|110/.test(i.toString())) {
-                    cell.append(i.toString().slice(1));
-                }
-
-                board.appendChild(cell);
-            }
-        });
-
-        [...gameWater].forEach(board => {
-            for (let i = 0; i < 100; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add("cell");
-
-                board.classList.contains("pc-water")
-                ? cell.setAttribute("id", `pc-cell-${i}`)
-                : cell.setAttribute("id", `user-cell-${i}`);
-
-                if (i === 0 && board.classList.contains("users-water")) {
-                    const ship = document.createElement('div');
-                    ship.setAttribute("id", "test-ship");
-                    ship.setAttribute("data-orientation", "h");
-                    ship.style.width = "160px";
-                    ship.style.height = "40px";
-                    cell.appendChild(ship);
-                }
-
-                board.appendChild(cell);
-            }
-        });
-
-        [...battleshipDock].forEach(dock => {
-            for(let i = 0; i < 5; i++) {
-                const ship = document.createElement('div');
-                ship.classList.add("ship-in-docking-area");
-                dock.appendChild(ship);
-            }
-        });
+        createGameBoardCoordinate();
+        createWaterCells();
+        createShipInDockArea();
 
         document.getElementById("test-ship").addEventListener("dblclick", changeOrientation);
         return () => document.getElementById("test-ship").removeEventListener("dblclick", changeOrientation);
