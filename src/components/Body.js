@@ -5,7 +5,6 @@ import ComputersGridArea from "./ComputersGridArea";
 import GameButton from "./GameButton";
 
 const position = { x: 0, y: 0 };
-let shipInitialCellNumber = null;
 let shipCurrentCellNumber = null;
 
 interact('#test-ship').draggable({
@@ -21,7 +20,6 @@ interact('#test-ship').draggable({
 
             shipCurrentCellNumber += ((e.dx/40) + (e.dy/4));
 
-            console.log(shipInitialCellNumber);
             console.log(shipCurrentCellNumber);
             console.log(checkCellCoordinate(shipCurrentCellNumber));
             // console.log(e.target);
@@ -117,21 +115,20 @@ function placeShipInUsersWater() {
     const ship = document.createElement('div');
     const getRandomNum = () => Math.floor(Math.random() * 100);
 
-    let cellToPlaceShip = getRandomNum();
+    let shipInitialCellNumber = getRandomNum();
     let shipInitialCellCoordinate = null;
     let usersWaterCell = null;
 
-    while (/H|I|J/.test(checkCellCoordinate(cellToPlaceShip))) {
-        console.error(checkCellCoordinate(cellToPlaceShip));
-        cellToPlaceShip = getRandomNum();
+    while (/H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
+        console.error(checkCellCoordinate(shipInitialCellNumber));
+        shipInitialCellNumber = getRandomNum();
     }
 
-    shipInitialCellNumber = cellToPlaceShip;
-    shipCurrentCellNumber = cellToPlaceShip;
-    shipInitialCellCoordinate = checkCellCoordinate(cellToPlaceShip);
-    usersWaterCell = document.getElementsByClassName("users-water")[0].children[cellToPlaceShip];
+    shipCurrentCellNumber = shipInitialCellNumber;
+    shipInitialCellCoordinate = checkCellCoordinate(shipInitialCellNumber);
+    usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
 
-    console.log(cellToPlaceShip);
+    console.log(shipInitialCellNumber);
     // console.log(usersWaterCell);
     console.log(shipInitialCellCoordinate);
     
@@ -155,7 +152,7 @@ function placeShipsInDockArea() {
 
 function changeOrientation(e) {
     if (e.target.dataset.orientation === "h") {
-        if (shipInitialCellNumber < 70) {
+        if (shipCurrentCellNumber < 70) {
             e.target.dataset.orientation = "v";
             e.target.style.width = "40px";
             e.target.style.height = "160px";
