@@ -5,6 +5,7 @@ import ComputersGridArea from "./ComputersGridArea";
 import GameButton from "./GameButton";
 
 const position = { x: 0, y: 0 };
+let shipCellPositionNumber = null;
 
 interact('#test-ship').draggable({
     listeners: {
@@ -69,7 +70,7 @@ function createWaterCells() {
     });
 }
 
-function checkShipPosition(num) {
+function checkCellCoordinate(num) {
     const lastIndexNum = num.toString().slice(-1);
     let horizontalCoordinate = null;
     let verticalCoordinate = null;
@@ -107,21 +108,22 @@ function placeShipInUsersWater() {
     const ship = document.createElement('div');
     const getRandomNum = () => Math.floor(Math.random() * 100);
 
-    let randomNum = getRandomNum();
-    let shipCellPosition = null;
+    let cellToPlaceShip = getRandomNum();
+    let shipCellPositionCoordinate = null;
     let usersWaterCell = null;
 
-    while (/H|I|J/.test(checkShipPosition(randomNum))) {
-        console.error(checkShipPosition(randomNum));
-        randomNum = getRandomNum();
+    while (/H|I|J/.test(checkCellCoordinate(cellToPlaceShip))) {
+        console.error(checkCellCoordinate(cellToPlaceShip));
+        cellToPlaceShip = getRandomNum();
     }
 
-    shipCellPosition = checkShipPosition(randomNum);
-    usersWaterCell = document.getElementsByClassName("users-water")[0].children[randomNum];
+    shipCellPositionNumber = cellToPlaceShip;
+    shipCellPositionCoordinate = checkCellCoordinate(cellToPlaceShip);
+    usersWaterCell = document.getElementsByClassName("users-water")[0].children[cellToPlaceShip];
 
-    console.log(randomNum);
+    console.log(cellToPlaceShip);
     console.log(usersWaterCell);
-    console.log(shipCellPosition);
+    console.log(shipCellPositionCoordinate);
     
     ship.setAttribute("id", "test-ship");
     ship.setAttribute("data-orientation", "h");
@@ -143,9 +145,11 @@ function placeShipsInDockArea() {
 
 function changeOrientation(e) {
     if (e.target.dataset.orientation === "h") {
-        e.target.dataset.orientation = "v";
-        e.target.style.width = "40px";
-        e.target.style.height = "160px";
+        if (shipCellPositionNumber < 70) {
+            e.target.dataset.orientation = "v";
+            e.target.style.width = "40px";
+            e.target.style.height = "160px";
+        }
     } else {
         e.target.dataset.orientation = "h";
         e.target.style.width = "160px";
