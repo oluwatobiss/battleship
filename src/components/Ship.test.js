@@ -1,41 +1,19 @@
-import Ship from "./Ship";
+import checkShipPosition from "./Ship";
 
-test("Aircraft Carrier parameter to return Aircraft Carrier object", () => {
-    expect(Ship("Aircraft Carrier")).toEqual({
-        length: 5,
-        hitSpots: [],
-        sunk: false
+describe("Ship's position on the board", () => {
+    test("Cell 0 to be A1", () => {
+        expect(checkShipPosition(0)).toBe("A1");
     });
-});
 
-test("Battleship parameter to return Battleship object", () => {
-    expect(Ship("Battleship")).toEqual({
-        length: 4,
-        hitSpots: [],
-        sunk: false
+    test("Cell 45 to be F5", () => {
+        expect(checkShipPosition(45)).toBe("F5");
     });
-});
 
-test("Cruiser parameter to return Cruise object", () => {
-    expect(Ship("Cruiser")).toEqual({
-        length: 3,
-        hitSpots: [],
-        sunk: false
+    test("Cell 72 to be C8", () => {
+        expect(checkShipPosition(72)).toBe("C8");
     });
-});
 
-test("Submarine parameter to return Submarine object", () => {
-    expect(Ship("Submarine")).toEqual({
-        length: 3,
-        hitSpots: [],
-        sunk: false
+    test("Cell 98 to be I10", () => {
+        expect(checkShipPosition(98)).toBe("I10");
     });
-});
-
-test("Destroyer parameter to return Destroyer object", () => {
-    expect(Ship("Destroyer")).toEqual({
-        length: 2,
-        hitSpots: [],
-        sunk: false
-    });
-});
+})

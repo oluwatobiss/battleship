@@ -8,25 +8,27 @@ const position = { x: 0, y: 0 };
 
 interact('#test-ship').draggable({
     listeners: {
-      move (e) {
-          position.x += e.dx
-          position.y += e.dy
-          
-          e.target.style.transform =
-          `translate(${position.x}px, ${position.y}px)`
-      },
+        move (e) {
+            position.x += e.dx
+            position.y += e.dy
+            
+            e.target.style.transform =
+            `translate(${position.x}px, ${position.y}px)`
+            console.log(e.target)
+            console.log(position)
+        },
     },
   
     modifiers: [
-      interact.modifiers.restrictRect({
-        restriction: '.users-water',
-      }),
-  
-      interact.modifiers.snap({ 
-          targets: [interact.snappers.grid({ x: 40, y: 40 })],
-          relativePoints: [{ x: 0, y: 0 }],
-          offset: 'self',
-      })
+        interact.modifiers.restrictRect({
+            restriction: '.users-water',
+        }),
+    
+        interact.modifiers.snap({ 
+            targets: [interact.snappers.grid({ x: 40, y: 40 })],
+            relativePoints: [{ x: 0, y: 0 }],
+            offset: 'self',
+        })
     ]
 });
 
@@ -67,10 +69,59 @@ function createWaterCells() {
     });
 }
 
+function checkShipPosition(num) {
+    const lastIndexNum = num.toString().slice(-1);
+    let horizontalCoordinate = null;
+    let verticalCoordinate = null;
+
+    switch (lastIndexNum) {
+        case "0": verticalCoordinate = "A"; break;
+        case "1": verticalCoordinate = "B"; break;
+        case "2": verticalCoordinate = "C"; break;
+        case "3": verticalCoordinate = "D"; break;
+        case "4": verticalCoordinate = "E"; break;
+        case "5": verticalCoordinate = "F"; break;
+        case "6": verticalCoordinate = "G"; break;
+        case "7": verticalCoordinate = "H"; break;
+        case "8": verticalCoordinate = "I"; break;
+        case "9": verticalCoordinate = "J"; break;
+        default: console.error("Vertical: Invalid cell input");
+    }
+    
+    num >= 0 && num < 10 ? horizontalCoordinate = 1 
+    : num >= 10 && num < 20 ? horizontalCoordinate = 2
+    : num >= 20 && num < 30 ? horizontalCoordinate = 3
+    : num >= 30 && num < 40 ? horizontalCoordinate = 4
+    : num >= 40 && num < 50 ? horizontalCoordinate = 5
+    : num >= 50 && num < 60 ? horizontalCoordinate = 6
+    : num >= 60 && num < 70 ? horizontalCoordinate = 7
+    : num >= 70 && num < 80 ? horizontalCoordinate = 8
+    : num >= 80 && num < 90 ? horizontalCoordinate = 9
+    : num >= 90 && num < 100 ? horizontalCoordinate = 10
+    : console.log("Horizontal: Invalid cell input!");
+
+    return verticalCoordinate + horizontalCoordinate;
+}
+
 function placeShipInUsersWater() {
-    const randomNum = Math.floor(Math.random() * 100);
-    const usersWaterCell = document.getElementsByClassName("users-water")[0].children[randomNum];
     const ship = document.createElement('div');
+    const getRandomNum = () => Math.floor(Math.random() * 100);
+
+    let randomNum = getRandomNum();
+    let shipCellPosition = null;
+    let usersWaterCell = null;
+
+    while (/H|I|J/.test(checkShipPosition(randomNum))) {
+        console.error(checkShipPosition(randomNum));
+        randomNum = getRandomNum();
+    }
+
+    shipCellPosition = checkShipPosition(randomNum);
+    usersWaterCell = document.getElementsByClassName("users-water")[0].children[randomNum];
+
+    console.log(randomNum);
+    console.log(usersWaterCell);
+    console.log(shipCellPosition);
     
     ship.setAttribute("id", "test-ship");
     ship.setAttribute("data-orientation", "h");
@@ -79,7 +130,7 @@ function placeShipInUsersWater() {
     usersWaterCell.appendChild(ship);
 }
 
-function createShipInDockArea() {
+function placeShipsInDockArea() {
     const battleshipDock = document.getElementsByClassName("ship-dock");
     [...battleshipDock].forEach(dock => {
         for(let i = 0; i < 5; i++) {
@@ -107,7 +158,7 @@ function Body() {
         createGameBoardCoordinate();
         createWaterCells();
         placeShipInUsersWater();
-        createShipInDockArea();
+        placeShipsInDockArea();
 
         document.getElementById("test-ship").addEventListener("dblclick", changeOrientation);
         return () => document.getElementById("test-ship").removeEventListener("dblclick", changeOrientation);
