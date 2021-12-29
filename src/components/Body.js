@@ -3,6 +3,8 @@ import interact from 'interactjs';
 import UsersGridArea from "./UsersGridArea";
 import ComputersGridArea from "./ComputersGridArea";
 import GameButton from "./GameButton";
+import checkCellCoordinate from "../checkCellCoordinate";
+import { checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates } from "../checkShipsOccupiedCells";
 
 const position = { x: 0, y: 0 };
 let shipCurrentCellNumber = null;
@@ -22,6 +24,8 @@ interact('#test-ship').draggable({
 
             console.log(shipCurrentCellNumber);
             console.log(checkCellCoordinate(shipCurrentCellNumber));
+            console.log(checkShipsOccupiedCellNumbers(shipCurrentCellNumber));
+            console.log(checkShipsOccupiedCellCoordinates(shipCurrentCellNumber));
             // console.log(e.target);
             // console.log(position);
         },
@@ -77,40 +81,6 @@ function createWaterCells() {
     });
 }
 
-function checkCellCoordinate(num) {
-    const lastIndexNum = num.toString().slice(-1);
-    let horizontalCoordinate = null;
-    let verticalCoordinate = null;
-
-    switch (lastIndexNum) {
-        case "0": verticalCoordinate = "A"; break;
-        case "1": verticalCoordinate = "B"; break;
-        case "2": verticalCoordinate = "C"; break;
-        case "3": verticalCoordinate = "D"; break;
-        case "4": verticalCoordinate = "E"; break;
-        case "5": verticalCoordinate = "F"; break;
-        case "6": verticalCoordinate = "G"; break;
-        case "7": verticalCoordinate = "H"; break;
-        case "8": verticalCoordinate = "I"; break;
-        case "9": verticalCoordinate = "J"; break;
-        default: console.error("Vertical: Invalid cell input");
-    }
-    
-    num >= 0 && num < 10 ? horizontalCoordinate = 1 
-    : num >= 10 && num < 20 ? horizontalCoordinate = 2
-    : num >= 20 && num < 30 ? horizontalCoordinate = 3
-    : num >= 30 && num < 40 ? horizontalCoordinate = 4
-    : num >= 40 && num < 50 ? horizontalCoordinate = 5
-    : num >= 50 && num < 60 ? horizontalCoordinate = 6
-    : num >= 60 && num < 70 ? horizontalCoordinate = 7
-    : num >= 70 && num < 80 ? horizontalCoordinate = 8
-    : num >= 80 && num < 90 ? horizontalCoordinate = 9
-    : num >= 90 && num < 100 ? horizontalCoordinate = 10
-    : console.log("Horizontal: Invalid cell input!");
-
-    return verticalCoordinate + horizontalCoordinate;
-}
-
 function placeShipInUsersWater() {
     const ship = document.createElement('div');
     const getRandomNum = () => Math.floor(Math.random() * 100);
@@ -137,6 +107,8 @@ function placeShipInUsersWater() {
     ship.style.width = "160px";
     ship.style.height = "40px";
     usersWaterCell.appendChild(ship);
+    console.log(checkShipsOccupiedCellNumbers(shipCurrentCellNumber));
+    console.log(checkShipsOccupiedCellCoordinates(shipCurrentCellNumber));
 }
 
 function placeShipsInDockArea() {
