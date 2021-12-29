@@ -9,11 +9,9 @@ import { checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates } from
 const position = { x: 0, y: 0 };
 let shipCurrentCellNumber = null;
 
-interact('#test-ship').draggable({
+interact('#battleship').draggable({
     listeners: {
         move (e) {
-            console.log(e.dx, e.dy);
-            
             position.x += e.dx;
             position.y += e.dy;
             
@@ -22,12 +20,8 @@ interact('#test-ship').draggable({
 
             shipCurrentCellNumber += ((e.dx/40) + (e.dy/4));
 
-            console.log(shipCurrentCellNumber);
-            console.log(checkCellCoordinate(shipCurrentCellNumber));
             console.log(checkShipsOccupiedCellNumbers(shipCurrentCellNumber));
             console.log(checkShipsOccupiedCellCoordinates(shipCurrentCellNumber));
-            // console.log(e.target);
-            // console.log(position);
         },
     },
   
@@ -81,34 +75,46 @@ function createWaterCells() {
     });
 }
 
-function placeShipInUsersWater() {
+function placeBattleshipInUsersWater() {
     const ship = document.createElement('div');
     const getRandomNum = () => Math.floor(Math.random() * 100);
+    const battleshipOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
+    const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
 
     let shipInitialCellNumber = getRandomNum();
-    let shipInitialCellCoordinate = null;
     let usersWaterCell = null;
 
-    while (/H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
-        console.error(checkCellCoordinate(shipInitialCellNumber));
-        shipInitialCellNumber = getRandomNum();
+    ship.setAttribute("id", "battleship");
+    ship.setAttribute("data-orientation", battleshipOrientation);
+    
+    if (battleshipOrientation === "h") {
+        ship.style.width = cellSize * 4 + "px";
+        ship.style.height = cellSize + "px";
+
+        while (/H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
+            console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
+            shipInitialCellNumber = getRandomNum();
+        }
+
+        console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "h"));
+        console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "h"));
+    } else {
+        ship.style.width = cellSize + "px";
+        ship.style.height = cellSize * 4 + "px";
+
+        while (shipInitialCellNumber >= 70) {
+            console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
+            shipInitialCellNumber = getRandomNum();
+        }
+
+        console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "v"));
+        console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "v"));
     }
 
     shipCurrentCellNumber = shipInitialCellNumber;
-    shipInitialCellCoordinate = checkCellCoordinate(shipInitialCellNumber);
     usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
-
-    console.log(shipInitialCellNumber);
-    // console.log(usersWaterCell);
-    console.log(shipInitialCellCoordinate);
     
-    ship.setAttribute("id", "test-ship");
-    ship.setAttribute("data-orientation", "h");
-    ship.style.width = "160px";
-    ship.style.height = "40px";
     usersWaterCell.appendChild(ship);
-    console.log(checkShipsOccupiedCellNumbers(shipCurrentCellNumber));
-    console.log(checkShipsOccupiedCellCoordinates(shipCurrentCellNumber));
 }
 
 function placeShipsInDockArea() {
@@ -140,11 +146,11 @@ function Body() {
     useEffect(() => {
         createGameBoardCoordinate();
         createWaterCells();
-        placeShipInUsersWater();
+        placeBattleshipInUsersWater();
         placeShipsInDockArea();
 
-        document.getElementById("test-ship").addEventListener("dblclick", changeOrientation);
-        return () => document.getElementById("test-ship").removeEventListener("dblclick", changeOrientation);
+        document.getElementById("battleship").addEventListener("dblclick", changeOrientation);
+        return () => document.getElementById("battleship").removeEventListener("dblclick", changeOrientation);
     }, []);
 
     return (

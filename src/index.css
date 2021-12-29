@@ -80,7 +80,7 @@ main {
     justify-content: space-between;
 }
 
-#test-ship {
+#battleship {
     background-color: chocolate;
     position: absolute;
     top: 0;
