@@ -5,18 +5,27 @@ import ComputersGridArea from "./ComputersGridArea";
 import GameButton from "./GameButton";
 
 const position = { x: 0, y: 0 };
-let shipCellPositionNumber = null;
+let shipInitialCellNumber = null;
+let shipCurrentCellNumber = null;
 
 interact('#test-ship').draggable({
     listeners: {
         move (e) {
-            position.x += e.dx
-            position.y += e.dy
+            console.log(e.dx, e.dy);
+            
+            position.x += e.dx;
+            position.y += e.dy;
             
             e.target.style.transform =
-            `translate(${position.x}px, ${position.y}px)`
-            console.log(e.target)
-            console.log(position)
+            `translate(${position.x}px, ${position.y}px)`;
+
+            shipCurrentCellNumber += ((e.dx/40) + (e.dy/4));
+
+            console.log(shipInitialCellNumber);
+            console.log(shipCurrentCellNumber);
+            console.log(checkCellCoordinate(shipCurrentCellNumber));
+            // console.log(e.target);
+            // console.log(position);
         },
     },
   
@@ -109,7 +118,7 @@ function placeShipInUsersWater() {
     const getRandomNum = () => Math.floor(Math.random() * 100);
 
     let cellToPlaceShip = getRandomNum();
-    let shipCellPositionCoordinate = null;
+    let shipInitialCellCoordinate = null;
     let usersWaterCell = null;
 
     while (/H|I|J/.test(checkCellCoordinate(cellToPlaceShip))) {
@@ -117,13 +126,14 @@ function placeShipInUsersWater() {
         cellToPlaceShip = getRandomNum();
     }
 
-    shipCellPositionNumber = cellToPlaceShip;
-    shipCellPositionCoordinate = checkCellCoordinate(cellToPlaceShip);
+    shipInitialCellNumber = cellToPlaceShip;
+    shipCurrentCellNumber = cellToPlaceShip;
+    shipInitialCellCoordinate = checkCellCoordinate(cellToPlaceShip);
     usersWaterCell = document.getElementsByClassName("users-water")[0].children[cellToPlaceShip];
 
     console.log(cellToPlaceShip);
-    console.log(usersWaterCell);
-    console.log(shipCellPositionCoordinate);
+    // console.log(usersWaterCell);
+    console.log(shipInitialCellCoordinate);
     
     ship.setAttribute("id", "test-ship");
     ship.setAttribute("data-orientation", "h");
@@ -145,7 +155,7 @@ function placeShipsInDockArea() {
 
 function changeOrientation(e) {
     if (e.target.dataset.orientation === "h") {
-        if (shipCellPositionNumber < 70) {
+        if (shipInitialCellNumber < 70) {
             e.target.dataset.orientation = "v";
             e.target.style.width = "40px";
             e.target.style.height = "160px";
