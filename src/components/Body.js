@@ -2,15 +2,20 @@ import {useEffect} from "react";
 import interact from 'interactjs';
 import UsersGridArea from "./UsersGridArea";
 import ComputersGridArea from "./ComputersGridArea";
-import GameButton from "./GameButton";
+import createGameBoardCoordinate from "../createGameBoardCoordinate";
 import checkCellCoordinate from "../checkCellCoordinate";
+import createWaterCells from "../createWaterCells";
+import shipFactory from "../shipFactory";
 import { checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates } from "../checkShipsOccupiedCells";
+import placeShipsInDockArea from "../placeShipsInDockArea";
+import GameButton from "./GameButton";
 
+const ships = shipFactory();
 const battleShipPosition = { x: 0, y: 0 };
 const aircraftCarrierPosition = { x: 0, y: 0 };
+
 let battleshipCurrentCellNumber = null;
 let aircraftCarrierCurrentCellNumber = null;
-let cellSize = null;
 
 interact('#aircraft-carrier').draggable({
     listeners: {
@@ -78,140 +83,137 @@ interact('#battleship').draggable({
     ]
 });
 
-function createGameBoardCoordinate() {
-    const gameBoard = document.getElementsByClassName("game-board");
-    [...gameBoard].forEach(board => {
-        for (let i = 0; i < 121; i++) {
-            const cell = document.createElement('div');
-            cell.classList.add("coordinate");
-
-            if (i > 0 && i < 11) {
-                const letters = ["", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-                cell.append(letters[i]);
+function placeShipsInUsersWater(ships) {
+    ships.forEach(obj => {        
+        const ship = document.createElement('div');
+        const getRandomNum = () => Math.floor(Math.random() * 100);
+        const shipOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
+        const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
+    
+        let shipInitialCellNumber = getRandomNum();
+        let usersWaterCell = null;
+    
+        ship.setAttribute("id", obj.id);
+        ship.setAttribute("data-orientation", shipOrientation);
+        
+        if (shipOrientation === "h") {
+            ship.style.width = cellSize * obj.length + "px";
+            ship.style.height = cellSize + "px";
+    
+            while (obj.notHeadColumns.test(checkCellCoordinate(shipInitialCellNumber))) {
+                console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
+                shipInitialCellNumber = getRandomNum();
             }
-
-            if (/^11$|22|33|44|55|66|77|88|99|110/.test(i.toString())) {
-                cell.append(i.toString().slice(1));
+    
+            console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, obj.name, "h"));
+            console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, obj.name, "h"));
+        } else {
+            ship.style.width = cellSize + "px";
+            ship.style.height = cellSize * obj.length + "px";
+    
+            while (shipInitialCellNumber >= obj.notHeadRows) {
+                console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
+                shipInitialCellNumber = getRandomNum();
             }
-
-            board.appendChild(cell);
+    
+            console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, obj.name, "v"));
+            console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, obj.name, "v"));
         }
+    
+        aircraftCarrierCurrentCellNumber = shipInitialCellNumber;
+        usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
+        
+        usersWaterCell.appendChild(ship);
     });
 }
 
-function createWaterCells() {
-    const gameWater = document.getElementsByClassName("game-water");
+// function placeAircraftCarrierInUsersWater() {
+//     const ship = document.createElement('div');
+//     const getRandomNum = () => Math.floor(Math.random() * 100);
+//     const aircraftCarrierOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
+//     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
 
-    [...gameWater].forEach(board => {
-        for (let i = 0; i < 100; i++) {
-            const cell = document.createElement('div');
-            cell.classList.add("cell");
+//     let shipInitialCellNumber = getRandomNum();
+//     let usersWaterCell = null;
 
-            board.classList.contains("pc-water")
-            ? cell.setAttribute("id", `pc-cell-${i}`)
-            : cell.setAttribute("id", `user-cell-${i}`);
-
-            board.appendChild(cell);
-        }
-    });
-
-    cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
-}
-
-function placeAircraftCarrierInUsersWater() {
-    const ship = document.createElement('div');
-    const getRandomNum = () => Math.floor(Math.random() * 100);
-    const battleshipOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
-
-    let shipInitialCellNumber = getRandomNum();
-    let usersWaterCell = null;
-
-    ship.setAttribute("id", "aircraft-carrier");
-    ship.setAttribute("data-orientation", battleshipOrientation);
+//     ship.setAttribute("id", "aircraft-carrier");
+//     ship.setAttribute("data-orientation", aircraftCarrierOrientation);
     
-    if (battleshipOrientation === "h") {
-        ship.style.width = cellSize * 5 + "px";
-        ship.style.height = cellSize + "px";
+//     if (aircraftCarrierOrientation === "h") {
+//         ship.style.width = cellSize * 5 + "px";
+//         ship.style.height = cellSize + "px";
 
-        while (/G|H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
-            console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
-            shipInitialCellNumber = getRandomNum();
-        }
+//         while (/G|H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
+//             console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
+//             shipInitialCellNumber = getRandomNum();
+//         }
 
-        console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Aircraft Carrier", "h"));
-        console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Aircraft Carrier", "h"));
-    } else {
-        ship.style.width = cellSize + "px";
-        ship.style.height = cellSize * 5 + "px";
+//         console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Aircraft Carrier", "h"));
+//         console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Aircraft Carrier", "h"));
+//     } else {
+//         ship.style.width = cellSize + "px";
+//         ship.style.height = cellSize * 5 + "px";
 
-        while (shipInitialCellNumber >= 60) {
-            console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
-            shipInitialCellNumber = getRandomNum();
-        }
+//         while (shipInitialCellNumber >= 60) {
+//             console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
+//             shipInitialCellNumber = getRandomNum();
+//         }
 
-        console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Aircraft Carrier", "v"));
-        console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Aircraft Carrier", "v"));
-    }
+//         console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Aircraft Carrier", "v"));
+//         console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Aircraft Carrier", "v"));
+//     }
 
-    aircraftCarrierCurrentCellNumber = shipInitialCellNumber;
-    usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
+//     aircraftCarrierCurrentCellNumber = shipInitialCellNumber;
+//     usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
     
-    usersWaterCell.appendChild(ship);
-}
+//     usersWaterCell.appendChild(ship);
+// }
 
-function placeBattleshipInUsersWater() {
-    const ship = document.createElement('div');
-    const getRandomNum = () => Math.floor(Math.random() * 100);
-    const battleshipOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
+// function placeBattleshipInUsersWater() {
+//     const ship = document.createElement('div');
+//     const getRandomNum = () => Math.floor(Math.random() * 100);
+//     const battleshipOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
+//     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
 
-    let shipInitialCellNumber = getRandomNum();
-    let usersWaterCell = null;
+//     let shipInitialCellNumber = getRandomNum();
+//     let usersWaterCell = null;
 
-    ship.setAttribute("id", "battleship");
-    ship.setAttribute("data-orientation", battleshipOrientation);
+//     ship.setAttribute("id", "battleship");
+//     ship.setAttribute("data-orientation", battleshipOrientation);
     
-    if (battleshipOrientation === "h") {
-        ship.style.width = cellSize * 4 + "px";
-        ship.style.height = cellSize + "px";
+//     if (battleshipOrientation === "h") {
+//         ship.style.width = cellSize * 4 + "px";
+//         ship.style.height = cellSize + "px";
 
-        while (/H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
-            console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
-            shipInitialCellNumber = getRandomNum();
-        }
+//         while (/H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
+//             console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
+//             shipInitialCellNumber = getRandomNum();
+//         }
 
-        console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Battleship", "h"));
-        console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Battleship", "h"));
-    } else {
-        ship.style.width = cellSize + "px";
-        ship.style.height = cellSize * 4 + "px";
+//         console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Battleship", "h"));
+//         console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Battleship", "h"));
+//     } else {
+//         ship.style.width = cellSize + "px";
+//         ship.style.height = cellSize * 4 + "px";
 
-        while (shipInitialCellNumber >= 70) {
-            console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
-            shipInitialCellNumber = getRandomNum();
-        }
+//         while (shipInitialCellNumber >= 70) {
+//             console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
+//             shipInitialCellNumber = getRandomNum();
+//         }
 
-        console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Battleship", "v"));
-        console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Battleship", "v"));
-    }
+//         console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Battleship", "v"));
+//         console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Battleship", "v"));
+//     }
 
-    battleshipCurrentCellNumber = shipInitialCellNumber;
-    usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
+//     battleshipCurrentCellNumber = shipInitialCellNumber;
+//     usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
     
-    usersWaterCell.appendChild(ship);
-}
-
-function placeShipsInDockArea() {
-    const battleshipDock = document.getElementsByClassName("ship-dock");
-    [...battleshipDock].forEach(dock => {
-        for(let i = 0; i < 5; i++) {
-            const ship = document.createElement('div');
-            ship.classList.add("ship-in-docking-area");
-            dock.appendChild(ship);
-        }
-    });
-}
+//     usersWaterCell.appendChild(ship);
+// }
 
 function changeAircraftCarrierOrientation(e) {
+    const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
+
     if (e.target.dataset.orientation === "h") {
         if (aircraftCarrierCurrentCellNumber < 60) {
             e.target.dataset.orientation = "v";
@@ -228,6 +230,8 @@ function changeAircraftCarrierOrientation(e) {
 }
 
 function changeBattleshipOrientation(e) {
+    const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
+
     if (e.target.dataset.orientation === "h") {
         if (battleshipCurrentCellNumber < 70) {
             e.target.dataset.orientation = "v";
@@ -247,8 +251,9 @@ function Body() {
     useEffect(() => {
         createGameBoardCoordinate();
         createWaterCells();
-        placeAircraftCarrierInUsersWater();
-        placeBattleshipInUsersWater();
+        placeShipsInUsersWater(ships)
+        // placeAircraftCarrierInUsersWater();
+        // placeBattleshipInUsersWater();
         placeShipsInDockArea();
 
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);

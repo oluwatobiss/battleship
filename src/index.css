@@ -80,7 +80,7 @@ main {
     justify-content: space-between;
 }
 
-#battleship, #aircraft-carrier {
+#aircraft-carrier, #battleship, #cruiser, #submarine, #destroyer {
     background-color: chocolate;
     position: absolute;
     top: 0;
