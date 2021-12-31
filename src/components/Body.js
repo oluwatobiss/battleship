@@ -16,6 +16,10 @@ const aircraftCarrierPosition = { x: 0, y: 0 };
 
 let battleshipCurrentCellNumber = null;
 let aircraftCarrierCurrentCellNumber = null;
+let cruiserCurrentCellNumber = null;
+let submarineCurrentCellNumber = null;
+let destroyerCurrentCellNumber = null;
+
 
 interact('#aircraft-carrier').draggable({
     listeners: {
@@ -84,7 +88,7 @@ interact('#battleship').draggable({
 });
 
 function placeShipsInUsersWater(ships) {
-    ships.forEach(obj => {        
+    ships.forEach(shipData => {        
         const ship = document.createElement('div');
         const getRandomNum = () => Math.floor(Math.random() * 100);
         const shipOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
@@ -93,34 +97,42 @@ function placeShipsInUsersWater(ships) {
         let shipInitialCellNumber = getRandomNum();
         let usersWaterCell = null;
     
-        ship.setAttribute("id", obj.id);
+        ship.setAttribute("id", shipData.id);
         ship.setAttribute("data-orientation", shipOrientation);
         
         if (shipOrientation === "h") {
-            ship.style.width = cellSize * obj.length + "px";
+            ship.style.width = cellSize * shipData.length + "px";
             ship.style.height = cellSize + "px";
     
-            while (obj.notHeadColumns.test(checkCellCoordinate(shipInitialCellNumber))) {
+            while (shipData.notHeadColumns.test(checkCellCoordinate(shipInitialCellNumber))) {
                 console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
                 shipInitialCellNumber = getRandomNum();
             }
     
-            console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, obj.name, "h"));
-            console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, obj.name, "h"));
+            console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, shipData.name, "h"));
+            console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, shipData.name, "h"));
         } else {
             ship.style.width = cellSize + "px";
-            ship.style.height = cellSize * obj.length + "px";
+            ship.style.height = cellSize * shipData.length + "px";
     
-            while (shipInitialCellNumber >= obj.notHeadRows) {
+            while (shipInitialCellNumber >= shipData.notHeadRows) {
                 console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
                 shipInitialCellNumber = getRandomNum();
             }
     
-            console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, obj.name, "v"));
-            console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, obj.name, "v"));
+            console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, shipData.name, "v"));
+            console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, shipData.name, "v"));
         }
-    
-        aircraftCarrierCurrentCellNumber = shipInitialCellNumber;
+
+        switch (shipData.name) {
+            case "Aircraft Carrier": aircraftCarrierCurrentCellNumber = shipInitialCellNumber; break;
+            case "Battleship": battleshipCurrentCellNumber = shipInitialCellNumber; break;
+            case "Cruiser": cruiserCurrentCellNumber = shipInitialCellNumber; break;
+            case "Submarine": submarineCurrentCellNumber = shipInitialCellNumber; break;
+            case "Destroyer": destroyerCurrentCellNumber = shipInitialCellNumber; break;
+            default: console.error("Not a valid ship name");
+        }
+
         usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
         
         usersWaterCell.appendChild(ship);
@@ -211,41 +223,87 @@ function placeShipsInUsersWater(ships) {
 //     usersWaterCell.appendChild(ship);
 // }
 
-function changeAircraftCarrierOrientation(e) {
+function changeShipOrientation(e, shipName, currentCellNum) {
     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
+    let shipData = null;
+
+    for (const obj of ships) {
+        if  (obj.name === shipName) {
+            shipData = obj;
+        }
+    }
 
     if (e.target.dataset.orientation === "h") {
-        if (aircraftCarrierCurrentCellNumber < 60) {
+        if (currentCellNum < shipData.notHeadRows) {
             e.target.dataset.orientation = "v";
             e.target.style.width = cellSize + "px";
-            e.target.style.height = cellSize * 5 + "px";
+            e.target.style.height = cellSize * shipData.length + "px";
         }
     } else {
-        if (!/G|H|I|J/.test(checkCellCoordinate(aircraftCarrierCurrentCellNumber))) {
+        if (!shipData.notHeadColumns.test(checkCellCoordinate(currentCellNum))) {
             e.target.dataset.orientation = "h";
-            e.target.style.width = cellSize * 5 + "px";
+            e.target.style.width = cellSize * shipData.length + "px";
             e.target.style.height = cellSize + "px";
         }
     }
+}
+
+function changeAircraftCarrierOrientation(e) {
+    changeShipOrientation(e, "Aircraft Carrier", aircraftCarrierCurrentCellNumber);
 }
 
 function changeBattleshipOrientation(e) {
-    const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
-
-    if (e.target.dataset.orientation === "h") {
-        if (battleshipCurrentCellNumber < 70) {
-            e.target.dataset.orientation = "v";
-            e.target.style.width = cellSize + "px";
-            e.target.style.height = cellSize * 4 + "px";
-        }
-    } else {
-        if (!/H|I|J/.test(checkCellCoordinate(battleshipCurrentCellNumber))) {
-            e.target.dataset.orientation = "h";
-            e.target.style.width = cellSize * 4 + "px";
-            e.target.style.height = cellSize + "px";
-        }
-    }
+    changeShipOrientation(e, "Battleship", battleshipCurrentCellNumber);
 }
+
+function changeCruiserOrientation(e) {
+    changeShipOrientation(e, "Cruiser", cruiserCurrentCellNumber);
+}
+
+function changeSubmarineOrientation(e) {
+    changeShipOrientation(e, "Submarine", submarineCurrentCellNumber);
+}
+
+function changeDestroyerOrientation(e) {
+    changeShipOrientation(e, "Destroyer", destroyerCurrentCellNumber);
+}
+
+// function changeAircraftCarrierOrientation(e) {
+//     console.log(e.target.id);
+//     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
+
+//     if (e.target.dataset.orientation === "h") {
+//         if (aircraftCarrierCurrentCellNumber < 60) {
+//             e.target.dataset.orientation = "v";
+//             e.target.style.width = cellSize + "px";
+//             e.target.style.height = cellSize * 5 + "px";
+//         }
+//     } else {
+//         if (!/G|H|I|J/.test(checkCellCoordinate(aircraftCarrierCurrentCellNumber))) {
+//             e.target.dataset.orientation = "h";
+//             e.target.style.width = cellSize * 5 + "px";
+//             e.target.style.height = cellSize + "px";
+//         }
+//     }
+// }
+
+// function changeBattleshipOrientation(e) {
+//     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
+
+//     if (e.target.dataset.orientation === "h") {
+//         if (battleshipCurrentCellNumber < 70) {
+//             e.target.dataset.orientation = "v";
+//             e.target.style.width = cellSize + "px";
+//             e.target.style.height = cellSize * 4 + "px";
+//         }
+//     } else {
+//         if (!/H|I|J/.test(checkCellCoordinate(battleshipCurrentCellNumber))) {
+//             e.target.dataset.orientation = "h";
+//             e.target.style.width = cellSize * 4 + "px";
+//             e.target.style.height = cellSize + "px";
+//         }
+//     }
+// }
 
 function Body() {
     useEffect(() => {
@@ -258,9 +316,15 @@ function Body() {
 
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);
         document.getElementById("battleship").addEventListener("dblclick", changeBattleshipOrientation);
+        document.getElementById("cruiser").addEventListener("dblclick", changeCruiserOrientation);
+        document.getElementById("submarine").addEventListener("dblclick", changeSubmarineOrientation);
+        document.getElementById("destroyer").addEventListener("dblclick", changeDestroyerOrientation);
         return () => {
             document.getElementById("aircraft-carrier").removeEventListener("dblclick", changeAircraftCarrierOrientation);
             document.getElementById("battleship").removeEventListener("dblclick", changeBattleshipOrientation);
+            document.getElementById("cruiser").removeEventListener("dblclick", changeCruiserOrientation);
+            document.getElementById("submarine").removeEventListener("dblclick", changeSubmarineOrientation);
+            document.getElementById("destroyer").removeEventListener("dblclick", changeDestroyerOrientation);
         }
     }, []);
 
