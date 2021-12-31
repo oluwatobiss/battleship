@@ -1,5 +1,4 @@
 import {useEffect} from "react";
-import interact from 'interactjs';
 import UsersGridArea from "./UsersGridArea";
 import ComputersGridArea from "./ComputersGridArea";
 import createGameBoardCoordinate from "../createGameBoardCoordinate";
@@ -8,89 +7,28 @@ import createWaterCells from "../createWaterCells";
 import shipFactory from "../shipFactory";
 import { checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates } from "../checkShipsOccupiedCells";
 import changeShipOrientation from "../changeShipOrientation";
+import dragShip from "../dragShip";
 import placeShipsInDockArea from "../placeShipsInDockArea";
 import GameButton from "./GameButton";
 
-let battleshipCurrentCellNumber = null;
-let aircraftCarrierCurrentCellNumber = null;
-let cruiserCurrentCellNumber = null;
-let submarineCurrentCellNumber = null;
-let destroyerCurrentCellNumber = null;
+let aircraftCarrierCurrCellNum = { num: null };
+let battleshipCurrCellNum = { num: null };
+let cruiserCurrCellNum = { num: null };
+let submarineCurrCellNum = { num: null };
+let destroyerCurrCellNum = { num: null };
 
 const ships = shipFactory();
-const battleShipPosition = { x: 0, y: 0 };
 const aircraftCarrierPosition = { x: 0, y: 0 };
-const changeAircraftCarrierOrientation = e => changeShipOrientation(e, ships, "Aircraft Carrier", aircraftCarrierCurrentCellNumber, checkCellCoordinate);
-const changeBattleshipOrientation = e => changeShipOrientation(e, ships, "Battleship", battleshipCurrentCellNumber, checkCellCoordinate);
-const changeCruiserOrientation = e => changeShipOrientation(e, ships, "Cruiser", cruiserCurrentCellNumber, checkCellCoordinate);
-const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "Submarine", submarineCurrentCellNumber, checkCellCoordinate);
-const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "Destroyer", destroyerCurrentCellNumber, checkCellCoordinate);
+const battleShipPosition = { x: 0, y: 0 };
+const cruiserPosition = { x: 0, y: 0 };
+const submarinePosition = { x: 0, y: 0 };
+const destroyerPosition = { x: 0, y: 0 };
 
-interact('#aircraft-carrier').draggable({
-    listeners: {
-        move (e) {
-            const orientation = e.target.dataset.orientation;
-
-            aircraftCarrierPosition.x += e.dx;
-            aircraftCarrierPosition.y += e.dy;
-            
-            e.target.style.transform =
-            `translate(${aircraftCarrierPosition.x}px, ${aircraftCarrierPosition.y}px)`;
-
-            aircraftCarrierCurrentCellNumber += ((e.dx/40) + (e.dy/4));
-
-            console.log(orientation);
-            console.log(e.target);
-            console.log(checkShipsOccupiedCellNumbers(aircraftCarrierCurrentCellNumber, "Aircraft Carrier", orientation));
-            console.log(checkShipsOccupiedCellCoordinates(aircraftCarrierCurrentCellNumber, "Aircraft Carrier", orientation));
-        },
-    },
-  
-    modifiers: [
-        interact.modifiers.restrictRect({
-            restriction: '.users-water',
-        }),
-    
-        interact.modifiers.snap({ 
-            targets: [interact.snappers.grid({ x: 40, y: 40 })],
-            relativePoints: [{ x: 0, y: 0 }],
-            offset: 'self',
-        })
-    ]
-});
-
-interact('#battleship').draggable({
-    listeners: {
-        move (e) {
-            const orientation = e.target.dataset.orientation;
-
-            battleShipPosition.x += e.dx;
-            battleShipPosition.y += e.dy;
-            
-            e.target.style.transform =
-            `translate(${battleShipPosition.x}px, ${battleShipPosition.y}px)`;
-
-            battleshipCurrentCellNumber += ((e.dx/40) + (e.dy/4));
-
-            console.log(orientation);
-            console.log(e.target);
-            console.log(checkShipsOccupiedCellNumbers(battleshipCurrentCellNumber, "Battleship", orientation));
-            console.log(checkShipsOccupiedCellCoordinates(battleshipCurrentCellNumber, "Battleship", orientation));
-        },
-    },
-  
-    modifiers: [
-        interact.modifiers.restrictRect({
-            restriction: '.users-water',
-        }),
-    
-        interact.modifiers.snap({ 
-            targets: [interact.snappers.grid({ x: 40, y: 40 })],
-            relativePoints: [{ x: 0, y: 0 }],
-            offset: 'self',
-        })
-    ]
-});
+const changeAircraftCarrierOrientation = e => changeShipOrientation(e, ships, "Aircraft Carrier", aircraftCarrierCurrCellNum.num, checkCellCoordinate);
+const changeBattleshipOrientation = e => changeShipOrientation(e, ships, "Battleship", battleshipCurrCellNum.num, checkCellCoordinate);
+const changeCruiserOrientation = e => changeShipOrientation(e, ships, "Cruiser", cruiserCurrCellNum.num, checkCellCoordinate);
+const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "Submarine", submarineCurrCellNum.num, checkCellCoordinate);
+const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "Destroyer", destroyerCurrCellNum.num, checkCellCoordinate);
 
 function placeShipsInUsersWater(ships) {
     ships.forEach(shipData => {        
@@ -130,11 +68,11 @@ function placeShipsInUsersWater(ships) {
         }
 
         switch (shipData.name) {
-            case "Aircraft Carrier": aircraftCarrierCurrentCellNumber = shipInitialCellNumber; break;
-            case "Battleship": battleshipCurrentCellNumber = shipInitialCellNumber; break;
-            case "Cruiser": cruiserCurrentCellNumber = shipInitialCellNumber; break;
-            case "Submarine": submarineCurrentCellNumber = shipInitialCellNumber; break;
-            case "Destroyer": destroyerCurrentCellNumber = shipInitialCellNumber; break;
+            case "Aircraft Carrier": aircraftCarrierCurrCellNum.num = shipInitialCellNumber; break;
+            case "Battleship": battleshipCurrCellNum.num = shipInitialCellNumber; break;
+            case "Cruiser": cruiserCurrCellNum.num = shipInitialCellNumber; break;
+            case "Submarine": submarineCurrCellNum.num = shipInitialCellNumber; break;
+            case "Destroyer": destroyerCurrCellNum.num = shipInitialCellNumber; break;
             default: console.error("Not a valid ship name");
         }
 
@@ -148,8 +86,14 @@ function Body() {
     useEffect(() => {
         createGameBoardCoordinate();
         createWaterCells();
-        placeShipsInUsersWater(ships)
+        placeShipsInUsersWater(ships);
         placeShipsInDockArea();
+
+        dragShip("#aircraft-carrier", "Aircraft Carrier", aircraftCarrierPosition, aircraftCarrierCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
+        dragShip("#battleship", "Battleship", battleShipPosition, battleshipCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
+        dragShip("#cruiser", "Cruiser", cruiserPosition, cruiserCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
+        dragShip("#submarine", "Submarine", submarinePosition, submarineCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
+        dragShip("#destroyer", "Destroyer", destroyerPosition, destroyerCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
 
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);
         document.getElementById("battleship").addEventListener("dblclick", changeBattleshipOrientation);
