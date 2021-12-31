@@ -7,12 +7,9 @@ import checkCellCoordinate from "../checkCellCoordinate";
 import createWaterCells from "../createWaterCells";
 import shipFactory from "../shipFactory";
 import { checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates } from "../checkShipsOccupiedCells";
+import changeShipOrientation from "../changeShipOrientation";
 import placeShipsInDockArea from "../placeShipsInDockArea";
 import GameButton from "./GameButton";
-
-const ships = shipFactory();
-const battleShipPosition = { x: 0, y: 0 };
-const aircraftCarrierPosition = { x: 0, y: 0 };
 
 let battleshipCurrentCellNumber = null;
 let aircraftCarrierCurrentCellNumber = null;
@@ -20,6 +17,14 @@ let cruiserCurrentCellNumber = null;
 let submarineCurrentCellNumber = null;
 let destroyerCurrentCellNumber = null;
 
+const ships = shipFactory();
+const battleShipPosition = { x: 0, y: 0 };
+const aircraftCarrierPosition = { x: 0, y: 0 };
+const changeAircraftCarrierOrientation = e => changeShipOrientation(e, ships, "Aircraft Carrier", aircraftCarrierCurrentCellNumber, checkCellCoordinate);
+const changeBattleshipOrientation = e => changeShipOrientation(e, ships, "Battleship", battleshipCurrentCellNumber, checkCellCoordinate);
+const changeCruiserOrientation = e => changeShipOrientation(e, ships, "Cruiser", cruiserCurrentCellNumber, checkCellCoordinate);
+const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "Submarine", submarineCurrentCellNumber, checkCellCoordinate);
+const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "Destroyer", destroyerCurrentCellNumber, checkCellCoordinate);
 
 interact('#aircraft-carrier').draggable({
     listeners: {
@@ -139,179 +144,11 @@ function placeShipsInUsersWater(ships) {
     });
 }
 
-// function placeAircraftCarrierInUsersWater() {
-//     const ship = document.createElement('div');
-//     const getRandomNum = () => Math.floor(Math.random() * 100);
-//     const aircraftCarrierOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
-//     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
-
-//     let shipInitialCellNumber = getRandomNum();
-//     let usersWaterCell = null;
-
-//     ship.setAttribute("id", "aircraft-carrier");
-//     ship.setAttribute("data-orientation", aircraftCarrierOrientation);
-    
-//     if (aircraftCarrierOrientation === "h") {
-//         ship.style.width = cellSize * 5 + "px";
-//         ship.style.height = cellSize + "px";
-
-//         while (/G|H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
-//             console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
-//             shipInitialCellNumber = getRandomNum();
-//         }
-
-//         console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Aircraft Carrier", "h"));
-//         console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Aircraft Carrier", "h"));
-//     } else {
-//         ship.style.width = cellSize + "px";
-//         ship.style.height = cellSize * 5 + "px";
-
-//         while (shipInitialCellNumber >= 60) {
-//             console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
-//             shipInitialCellNumber = getRandomNum();
-//         }
-
-//         console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Aircraft Carrier", "v"));
-//         console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Aircraft Carrier", "v"));
-//     }
-
-//     aircraftCarrierCurrentCellNumber = shipInitialCellNumber;
-//     usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
-    
-//     usersWaterCell.appendChild(ship);
-// }
-
-// function placeBattleshipInUsersWater() {
-//     const ship = document.createElement('div');
-//     const getRandomNum = () => Math.floor(Math.random() * 100);
-//     const battleshipOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
-//     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
-
-//     let shipInitialCellNumber = getRandomNum();
-//     let usersWaterCell = null;
-
-//     ship.setAttribute("id", "battleship");
-//     ship.setAttribute("data-orientation", battleshipOrientation);
-    
-//     if (battleshipOrientation === "h") {
-//         ship.style.width = cellSize * 4 + "px";
-//         ship.style.height = cellSize + "px";
-
-//         while (/H|I|J/.test(checkCellCoordinate(shipInitialCellNumber))) {
-//             console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
-//             shipInitialCellNumber = getRandomNum();
-//         }
-
-//         console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Battleship", "h"));
-//         console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Battleship", "h"));
-//     } else {
-//         ship.style.width = cellSize + "px";
-//         ship.style.height = cellSize * 4 + "px";
-
-//         while (shipInitialCellNumber >= 70) {
-//             console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
-//             shipInitialCellNumber = getRandomNum();
-//         }
-
-//         console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, "Battleship", "v"));
-//         console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, "Battleship", "v"));
-//     }
-
-//     battleshipCurrentCellNumber = shipInitialCellNumber;
-//     usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
-    
-//     usersWaterCell.appendChild(ship);
-// }
-
-function changeShipOrientation(e, shipName, currentCellNum) {
-    const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
-    let shipData = null;
-
-    for (const obj of ships) {
-        if  (obj.name === shipName) {
-            shipData = obj;
-        }
-    }
-
-    if (e.target.dataset.orientation === "h") {
-        if (currentCellNum < shipData.notHeadRows) {
-            e.target.dataset.orientation = "v";
-            e.target.style.width = cellSize + "px";
-            e.target.style.height = cellSize * shipData.length + "px";
-        }
-    } else {
-        if (!shipData.notHeadColumns.test(checkCellCoordinate(currentCellNum))) {
-            e.target.dataset.orientation = "h";
-            e.target.style.width = cellSize * shipData.length + "px";
-            e.target.style.height = cellSize + "px";
-        }
-    }
-}
-
-function changeAircraftCarrierOrientation(e) {
-    changeShipOrientation(e, "Aircraft Carrier", aircraftCarrierCurrentCellNumber);
-}
-
-function changeBattleshipOrientation(e) {
-    changeShipOrientation(e, "Battleship", battleshipCurrentCellNumber);
-}
-
-function changeCruiserOrientation(e) {
-    changeShipOrientation(e, "Cruiser", cruiserCurrentCellNumber);
-}
-
-function changeSubmarineOrientation(e) {
-    changeShipOrientation(e, "Submarine", submarineCurrentCellNumber);
-}
-
-function changeDestroyerOrientation(e) {
-    changeShipOrientation(e, "Destroyer", destroyerCurrentCellNumber);
-}
-
-// function changeAircraftCarrierOrientation(e) {
-//     console.log(e.target.id);
-//     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
-
-//     if (e.target.dataset.orientation === "h") {
-//         if (aircraftCarrierCurrentCellNumber < 60) {
-//             e.target.dataset.orientation = "v";
-//             e.target.style.width = cellSize + "px";
-//             e.target.style.height = cellSize * 5 + "px";
-//         }
-//     } else {
-//         if (!/G|H|I|J/.test(checkCellCoordinate(aircraftCarrierCurrentCellNumber))) {
-//             e.target.dataset.orientation = "h";
-//             e.target.style.width = cellSize * 5 + "px";
-//             e.target.style.height = cellSize + "px";
-//         }
-//     }
-// }
-
-// function changeBattleshipOrientation(e) {
-//     const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
-
-//     if (e.target.dataset.orientation === "h") {
-//         if (battleshipCurrentCellNumber < 70) {
-//             e.target.dataset.orientation = "v";
-//             e.target.style.width = cellSize + "px";
-//             e.target.style.height = cellSize * 4 + "px";
-//         }
-//     } else {
-//         if (!/H|I|J/.test(checkCellCoordinate(battleshipCurrentCellNumber))) {
-//             e.target.dataset.orientation = "h";
-//             e.target.style.width = cellSize * 4 + "px";
-//             e.target.style.height = cellSize + "px";
-//         }
-//     }
-// }
-
 function Body() {
     useEffect(() => {
         createGameBoardCoordinate();
         createWaterCells();
         placeShipsInUsersWater(ships)
-        // placeAircraftCarrierInUsersWater();
-        // placeBattleshipInUsersWater();
         placeShipsInDockArea();
 
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);
