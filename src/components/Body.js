@@ -4,6 +4,7 @@ import ComputersGridArea from "./ComputersGridArea";
 import createGameBoardCoordinate from "../createGameBoardCoordinate";
 import checkCellCoordinate from "../checkCellCoordinate";
 import createWaterCells from "../createWaterCells";
+import placeShipsInUsersWater from "../placeShipsInUsersWater";
 import shipFactory from "../shipFactory";
 import { checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates } from "../checkShipsOccupiedCells";
 import changeShipOrientation from "../changeShipOrientation";
@@ -30,63 +31,21 @@ const changeCruiserOrientation = e => changeShipOrientation(e, ships, "Cruiser",
 const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "Submarine", submarineCurrCellNum.num, checkCellCoordinate);
 const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "Destroyer", destroyerCurrCellNum.num, checkCellCoordinate);
 
-function placeShipsInUsersWater(ships) {
-    ships.forEach(shipData => {        
-        const ship = document.createElement('div');
-        const getRandomNum = () => Math.floor(Math.random() * 100);
-        const shipOrientation = Math.floor(Math.random() * 2) % 2 === 0 ? "h" : "v";
-        const cellSize = document.getElementsByClassName("users-water")[0].children[0].clientWidth;
-    
-        let shipInitialCellNumber = getRandomNum();
-        let usersWaterCell = null;
-    
-        ship.setAttribute("id", shipData.id);
-        ship.setAttribute("data-orientation", shipOrientation);
-        
-        if (shipOrientation === "h") {
-            ship.style.width = cellSize * shipData.length + "px";
-            ship.style.height = cellSize + "px";
-    
-            while (shipData.notHeadColumns.test(checkCellCoordinate(shipInitialCellNumber))) {
-                console.error("Horizontal: " + checkCellCoordinate(shipInitialCellNumber));
-                shipInitialCellNumber = getRandomNum();
-            }
-    
-            console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, shipData.name, "h"));
-            console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, shipData.name, "h"));
-        } else {
-            ship.style.width = cellSize + "px";
-            ship.style.height = cellSize * shipData.length + "px";
-    
-            while (shipInitialCellNumber >= shipData.notHeadRows) {
-                console.error("Vertical: " + checkCellCoordinate(shipInitialCellNumber));
-                shipInitialCellNumber = getRandomNum();
-            }
-    
-            console.log(checkShipsOccupiedCellNumbers(shipInitialCellNumber, shipData.name, "v"));
-            console.log(checkShipsOccupiedCellCoordinates(shipInitialCellNumber, shipData.name, "v"));
-        }
-
-        switch (shipData.name) {
-            case "Aircraft Carrier": aircraftCarrierCurrCellNum.num = shipInitialCellNumber; break;
-            case "Battleship": battleshipCurrCellNum.num = shipInitialCellNumber; break;
-            case "Cruiser": cruiserCurrCellNum.num = shipInitialCellNumber; break;
-            case "Submarine": submarineCurrCellNum.num = shipInitialCellNumber; break;
-            case "Destroyer": destroyerCurrCellNum.num = shipInitialCellNumber; break;
-            default: console.error("Not a valid ship name");
-        }
-
-        usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
-        
-        usersWaterCell.appendChild(ship);
-    });
-}
-
 function Body() {
     useEffect(() => {
         createGameBoardCoordinate();
         createWaterCells();
-        placeShipsInUsersWater(ships);
+        placeShipsInUsersWater(
+            ships,
+            checkCellCoordinate,
+            checkShipsOccupiedCellNumbers,
+            checkShipsOccupiedCellCoordinates,
+            aircraftCarrierCurrCellNum, 
+            battleshipCurrCellNum, 
+            cruiserCurrCellNum,
+            submarineCurrCellNum,
+            destroyerCurrCellNum
+        );
         placeShipsInDockArea();
 
         dragShip("#aircraft-carrier", "Aircraft Carrier", aircraftCarrierPosition, aircraftCarrierCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
