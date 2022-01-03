@@ -1,4 +1,16 @@
-function placeShipsInUsersWater(ships, cellCoord, occupiedCellNums, occupiedCellCoords, airCurrCell, batCurrCell, cruCurrCell, subCurrCell, desCurrCell) {
+function placeShipsInUsersWater(
+    ships, 
+    cellCoord, 
+    getOccupiedCellsNums, 
+    getOccupiedCellsCoords, 
+    airCurrCell, 
+    batCurrCell, 
+    cruCurrCell, 
+    subCurrCell, 
+    desCurrCell,
+    occupiedCellsNums,
+    occupiedCellsCoords
+    ) {
     ships.forEach(shipData => {        
         const ship = document.createElement('div');
         const getRandomNum = () => Math.floor(Math.random() * 100);
@@ -20,8 +32,8 @@ function placeShipsInUsersWater(ships, cellCoord, occupiedCellNums, occupiedCell
                 shipInitialCellNumber = getRandomNum();
             }
     
-            console.log(occupiedCellNums(shipInitialCellNumber, shipData.name, "h"));
-            console.log(occupiedCellCoords(shipInitialCellNumber, shipData.name, "h"));
+            occupiedCellsNums[shipData.name] = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, "h");
+            occupiedCellsCoords[shipData.name] = getOccupiedCellsCoords(shipInitialCellNumber, shipData.name, "h");
         } else {
             ship.style.width = cellSize + "px";
             ship.style.height = cellSize * shipData.length + "px";
@@ -31,22 +43,23 @@ function placeShipsInUsersWater(ships, cellCoord, occupiedCellNums, occupiedCell
                 shipInitialCellNumber = getRandomNum();
             }
     
-            console.log(occupiedCellNums(shipInitialCellNumber, shipData.name, "v"));
-            console.log(occupiedCellCoords(shipInitialCellNumber, shipData.name, "v"));
+            occupiedCellsNums[shipData.name] = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, "v");
+            occupiedCellsCoords[shipData.name] = getOccupiedCellsCoords(shipInitialCellNumber, shipData.name, "v");
         }
 
         switch (shipData.name) {
-            case "Aircraft Carrier": airCurrCell.num = shipInitialCellNumber; break;
-            case "Battleship": batCurrCell.num = shipInitialCellNumber; break;
-            case "Cruiser": cruCurrCell.num = shipInitialCellNumber; break;
-            case "Submarine": subCurrCell.num = shipInitialCellNumber; break;
-            case "Destroyer": desCurrCell.num = shipInitialCellNumber; break;
+            case "aircraftCarrier": airCurrCell.num = shipInitialCellNumber; break;
+            case "battleship": batCurrCell.num = shipInitialCellNumber; break;
+            case "cruiser": cruCurrCell.num = shipInitialCellNumber; break;
+            case "submarine": subCurrCell.num = shipInitialCellNumber; break;
+            case "destroyer": desCurrCell.num = shipInitialCellNumber; break;
             default: console.error("Not a valid ship name");
         }
 
         usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
-        
         usersWaterCell.appendChild(ship);
+        console.log(occupiedCellsNums);
+        console.log(occupiedCellsCoords);
     });
 }
 

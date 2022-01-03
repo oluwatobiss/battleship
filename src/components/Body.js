@@ -6,7 +6,7 @@ import checkCellCoordinate from "../checkCellCoordinate";
 import createWaterCells from "../createWaterCells";
 import placeShipsInUsersWater from "../placeShipsInUsersWater";
 import shipFactory from "../shipFactory";
-import { checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates } from "../checkShipsOccupiedCells";
+import { getShipOccupiedCellsNumbers, getShipOccupiedCellsCoordinates } from "../getShipOccupiedCells";
 import changeShipOrientation from "../changeShipOrientation";
 import dragShip from "../dragShip";
 import placeShipsInDockArea from "../placeShipsInDockArea";
@@ -24,12 +24,26 @@ const battleShipPosition = { x: 0, y: 0 };
 const cruiserPosition = { x: 0, y: 0 };
 const submarinePosition = { x: 0, y: 0 };
 const destroyerPosition = { x: 0, y: 0 };
+const occupiedCellsNums = {
+    aircraftCarrier: [],
+    battleship: [],
+    cruiser: [],
+    submarine: [],
+    destroyer: []
+};
+const occupiedCellsCoords = {
+    aircraftCarrier: [],
+    battleship: [],
+    cruiser: [],
+    submarine: [],
+    destroyer: []
+};
 
-const changeAircraftCarrierOrientation = e => changeShipOrientation(e, ships, "Aircraft Carrier", aircraftCarrierCurrCellNum.num, checkCellCoordinate);
-const changeBattleshipOrientation = e => changeShipOrientation(e, ships, "Battleship", battleshipCurrCellNum.num, checkCellCoordinate);
-const changeCruiserOrientation = e => changeShipOrientation(e, ships, "Cruiser", cruiserCurrCellNum.num, checkCellCoordinate);
-const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "Submarine", submarineCurrCellNum.num, checkCellCoordinate);
-const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "Destroyer", destroyerCurrCellNum.num, checkCellCoordinate);
+const changeAircraftCarrierOrientation = e => changeShipOrientation(e, ships, "aircraftCarrier", aircraftCarrierCurrCellNum.num, checkCellCoordinate);
+const changeBattleshipOrientation = e => changeShipOrientation(e, ships, "battleship", battleshipCurrCellNum.num, checkCellCoordinate);
+const changeCruiserOrientation = e => changeShipOrientation(e, ships, "cruiser", cruiserCurrCellNum.num, checkCellCoordinate);
+const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "submarine", submarineCurrCellNum.num, checkCellCoordinate);
+const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "destroyer", destroyerCurrCellNum.num, checkCellCoordinate);
 
 function Body() {
     useEffect(() => {
@@ -38,27 +52,75 @@ function Body() {
         placeShipsInUsersWater(
             ships,
             checkCellCoordinate,
-            checkShipsOccupiedCellNumbers,
-            checkShipsOccupiedCellCoordinates,
+            getShipOccupiedCellsNumbers,
+            getShipOccupiedCellsCoordinates,
             aircraftCarrierCurrCellNum, 
             battleshipCurrCellNum, 
             cruiserCurrCellNum,
             submarineCurrCellNum,
-            destroyerCurrCellNum
+            destroyerCurrCellNum,
+            occupiedCellsNums,
+            occupiedCellsCoords
         );
         placeShipsInDockArea();
 
-        dragShip("#aircraft-carrier", "Aircraft Carrier", aircraftCarrierPosition, aircraftCarrierCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
-        dragShip("#battleship", "Battleship", battleShipPosition, battleshipCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
-        dragShip("#cruiser", "Cruiser", cruiserPosition, cruiserCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
-        dragShip("#submarine", "Submarine", submarinePosition, submarineCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
-        dragShip("#destroyer", "Destroyer", destroyerPosition, destroyerCurrCellNum, checkShipsOccupiedCellNumbers, checkShipsOccupiedCellCoordinates);
+        dragShip(
+            "#aircraft-carrier", 
+            "aircraftCarrier", 
+            aircraftCarrierPosition, 
+            aircraftCarrierCurrCellNum, 
+            getShipOccupiedCellsNumbers, 
+            getShipOccupiedCellsCoordinates,
+            occupiedCellsNums,
+            occupiedCellsCoords
+        );
+        dragShip(
+            "#battleship", 
+            "battleship", 
+            battleShipPosition, 
+            battleshipCurrCellNum, 
+            getShipOccupiedCellsNumbers, 
+            getShipOccupiedCellsCoordinates,
+            occupiedCellsNums,
+            occupiedCellsCoords
+        );
+        dragShip(
+            "#cruiser", 
+            "cruiser", 
+            cruiserPosition, 
+            cruiserCurrCellNum, 
+            getShipOccupiedCellsNumbers, 
+            getShipOccupiedCellsCoordinates,
+            occupiedCellsNums,
+            occupiedCellsCoords
+        );
+        dragShip(
+            "#submarine", 
+            "submarine", 
+            submarinePosition, 
+            submarineCurrCellNum, 
+            getShipOccupiedCellsNumbers, 
+            getShipOccupiedCellsCoordinates,
+            occupiedCellsNums,
+            occupiedCellsCoords
+        );
+        dragShip(
+            "#destroyer", 
+            "destroyer", 
+            destroyerPosition, 
+            destroyerCurrCellNum, 
+            getShipOccupiedCellsNumbers, 
+            getShipOccupiedCellsCoordinates,
+            occupiedCellsNums,
+            occupiedCellsCoords
+        );
 
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);
         document.getElementById("battleship").addEventListener("dblclick", changeBattleshipOrientation);
         document.getElementById("cruiser").addEventListener("dblclick", changeCruiserOrientation);
         document.getElementById("submarine").addEventListener("dblclick", changeSubmarineOrientation);
         document.getElementById("destroyer").addEventListener("dblclick", changeDestroyerOrientation);
+        
         return () => {
             document.getElementById("aircraft-carrier").removeEventListener("dblclick", changeAircraftCarrierOrientation);
             document.getElementById("battleship").removeEventListener("dblclick", changeBattleshipOrientation);

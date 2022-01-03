@@ -1,6 +1,6 @@
 import interact from 'interactjs';
 
-function dragShip(id, name, shipPosition, shipCurrCellNum, occupiedCellNums, occupiedCellCoords) {
+function dragShip(id, name, shipPosition, shipCurrCellNum, getOccupiedCellsNums, getOccupiedCellsCoords, occupiedCellsNums, occupiedCellsCoords) {
     interact(id).draggable({
         listeners: {
             move (e) {
@@ -13,11 +13,12 @@ function dragShip(id, name, shipPosition, shipCurrCellNum, occupiedCellNums, occ
                 `translate(${shipPosition.x}px, ${shipPosition.y}px)`;
     
                 shipCurrCellNum.num += ((e.dx/40) + (e.dy/4));
-    
+                occupiedCellsNums[name] = getOccupiedCellsNums(shipCurrCellNum.num, name, orientation);
+                occupiedCellsCoords[name] = getOccupiedCellsCoords(shipCurrCellNum.num, name, orientation);
+
                 console.log(orientation);
-                console.log(e.target);
-                console.log(occupiedCellNums(shipCurrCellNum.num, name, orientation));
-                console.log(occupiedCellCoords(shipCurrCellNum.num, name, orientation));
+                console.log(occupiedCellsNums[name]);
+                console.log(occupiedCellsCoords[name]);
             },
         },
       
