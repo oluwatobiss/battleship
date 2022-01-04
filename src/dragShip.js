@@ -16,9 +16,9 @@ function dragShip(id, name, shipPosition, shipCurrCellNum, getOccupiedCellsNums,
                 occupiedCellsNums[name] = getOccupiedCellsNums(shipCurrCellNum.num, name, orientation);
                 occupiedCellsCoords[name] = getOccupiedCellsCoords(shipCurrCellNum.num, name, orientation);
 
-                console.log(orientation);
-                console.log(occupiedCellsNums[name]);
-                console.log(occupiedCellsCoords[name]);
+                // console.log(orientation);
+                // console.log(occupiedCellsNums[name]);
+                // console.log(occupiedCellsCoords[name]);
             },
         },
       
