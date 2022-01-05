@@ -28,8 +28,8 @@ function placeShipsInUsersWater(
     
         let shipInitialCellNumber = getRandomNum();
         let proposedShipCellsNums = [shipInitialCellNumber];
-        let usersWaterCell = null;
         let somePropCellsNotFree = false;
+        let usersWaterCell = null;
     
         ship.setAttribute("id", shipData.id);
         ship.setAttribute("data-orientation", shipOrientation);
@@ -57,9 +57,9 @@ function placeShipsInUsersWater(
             checkIfAllProposedShipCellsNumsAreFree();
 
             while (shipData.notHeadColumns.test(cellCoord(shipInitialCellNumber)) || somePropCellsNotFree) {
-                console.error("Horizontal Cell In Use: " + somePropCellsNotFree);
-                console.error("Horizontal Cell In Use: " + shipInitialCellNumber);
-                console.error("Horizontal: " + cellCoord(shipInitialCellNumber));
+                // console.error("Horizontal Cell In Use: " + somePropCellsNotFree);
+                // console.error("Horizontal Cell In Use: " + shipInitialCellNumber);
+                // console.error("Horizontal: " + cellCoord(shipInitialCellNumber));
                 shipInitialCellNumber = getRandomNum();
                 proposedShipCellsNums = [shipInitialCellNumber];
                 somePropCellsNotFree = false;
@@ -77,9 +77,9 @@ function placeShipsInUsersWater(
             checkIfAllProposedShipCellsNumsAreFree();
 
             while (shipInitialCellNumber >= shipData.notHeadRows || somePropCellsNotFree) {
-                console.error("Vertical Cell In Use: " + somePropCellsNotFree);
-                console.error("Vertical Cell In Use: " + shipInitialCellNumber);
-                console.error("Vertical: " + cellCoord(shipInitialCellNumber));
+                // console.error("Vertical Cell In Use: " + somePropCellsNotFree);
+                // console.error("Vertical Cell In Use: " + shipInitialCellNumber);
+                // console.error("Vertical: " + cellCoord(shipInitialCellNumber));
                 shipInitialCellNumber = getRandomNum();
                 proposedShipCellsNums = [shipInitialCellNumber];
                 somePropCellsNotFree = false;

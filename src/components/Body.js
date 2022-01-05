@@ -19,11 +19,11 @@ let submarineCurrCellNum = { num: null };
 let destroyerCurrCellNum = { num: null };
 
 const ships = shipFactory();
-const aircraftCarrierPosition = { x: 0, y: 0 };
-const battleShipPosition = { x: 0, y: 0 };
-const cruiserPosition = { x: 0, y: 0 };
-const submarinePosition = { x: 0, y: 0 };
-const destroyerPosition = { x: 0, y: 0 };
+const aircraftCarrierAxisPosition = { x: 0, y: 0 };
+const battleShipAxisPosition = { x: 0, y: 0 };
+const cruiserAxisPosition = { x: 0, y: 0 };
+const submarineAxisPosition = { x: 0, y: 0 };
+const destroyerAxisPosition = { x: 0, y: 0 };
 const occupiedCellsNums = {
     aircraftCarrier: [],
     battleship: [],
@@ -66,8 +66,8 @@ function Body() {
 
         dragShip(
             "#aircraft-carrier", 
-            "aircraftCarrier", 
-            aircraftCarrierPosition, 
+            "aircraftCarrier",
+            aircraftCarrierAxisPosition, 
             aircraftCarrierCurrCellNum, 
             getShipOccupiedCellsNumbers, 
             getShipOccupiedCellsCoordinates,
@@ -76,8 +76,8 @@ function Body() {
         );
         dragShip(
             "#battleship", 
-            "battleship", 
-            battleShipPosition, 
+            "battleship",
+            battleShipAxisPosition, 
             battleshipCurrCellNum, 
             getShipOccupiedCellsNumbers, 
             getShipOccupiedCellsCoordinates,
@@ -86,8 +86,8 @@ function Body() {
         );
         dragShip(
             "#cruiser", 
-            "cruiser", 
-            cruiserPosition, 
+            "cruiser",
+            cruiserAxisPosition, 
             cruiserCurrCellNum, 
             getShipOccupiedCellsNumbers, 
             getShipOccupiedCellsCoordinates,
@@ -96,8 +96,8 @@ function Body() {
         );
         dragShip(
             "#submarine", 
-            "submarine", 
-            submarinePosition, 
+            "submarine",
+            submarineAxisPosition, 
             submarineCurrCellNum, 
             getShipOccupiedCellsNumbers, 
             getShipOccupiedCellsCoordinates,
@@ -106,8 +106,8 @@ function Body() {
         );
         dragShip(
             "#destroyer", 
-            "destroyer", 
-            destroyerPosition, 
+            "destroyer",
+            destroyerAxisPosition, 
             destroyerCurrCellNum, 
             getShipOccupiedCellsNumbers, 
             getShipOccupiedCellsCoordinates,
