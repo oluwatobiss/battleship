@@ -23,22 +23,14 @@ function placeShipsInUsersWater(
             ...occupiedCellsNums.submarine,
             ...occupiedCellsNums.destroyer
         ])];
-
-        // console.log(occupiedCells);
     
         let shipInitialCellNumber = getRandomNum();
-        let proposedShipCellsNums = [shipInitialCellNumber];
+        let proposedShipCellsNums = [];
         let somePropCellsNotFree = false;
         let usersWaterCell = null;
     
         ship.setAttribute("id", shipData.id);
         ship.setAttribute("data-orientation", shipOrientation);
-
-        function setProposedShipCellsNums(num) {
-            for (let i = 1; i < shipData.length; i++) {
-                proposedShipCellsNums.push(proposedShipCellsNums[i - 1] + num);
-            }
-        }
 
         function checkIfAllProposedShipCellsNumsAreFree() {
             for (let i = 0; i < proposedShipCellsNums.length; i++) {
@@ -53,42 +45,41 @@ function placeShipsInUsersWater(
             ship.style.width = cellSize * shipData.length + "px";
             ship.style.height = cellSize + "px";
     
-            setProposedShipCellsNums(1);
+            proposedShipCellsNums = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
             checkIfAllProposedShipCellsNumsAreFree();
 
             while (shipData.notHeadColumns.test(cellCoord(shipInitialCellNumber)) || somePropCellsNotFree) {
-                // console.error("Horizontal Cell In Use: " + somePropCellsNotFree);
-                // console.error("Horizontal Cell In Use: " + shipInitialCellNumber);
-                // console.error("Horizontal: " + cellCoord(shipInitialCellNumber));
-                shipInitialCellNumber = getRandomNum();
-                proposedShipCellsNums = [shipInitialCellNumber];
+                console.error("Horizontal Cell In Use: " + somePropCellsNotFree);
+                console.error("Horizontal Cell In Use: " + shipInitialCellNumber);
+                console.error("Horizontal: " + cellCoord(shipInitialCellNumber));
+
                 somePropCellsNotFree = false;
-                setProposedShipCellsNums(1);
+                shipInitialCellNumber = getRandomNum();
+                proposedShipCellsNums = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
                 checkIfAllProposedShipCellsNumsAreFree();
             }
     
-            occupiedCellsNums[shipData.name] = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, "h");
-            occupiedCellsCoords[shipData.name] = getOccupiedCellsCoords(shipInitialCellNumber, shipData.name, "h");
+            occupiedCellsNums[shipData.name] = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
+            occupiedCellsCoords[shipData.name] = getOccupiedCellsCoords(shipInitialCellNumber, shipData.name, shipOrientation);
         } else {
             ship.style.width = cellSize + "px";
             ship.style.height = cellSize * shipData.length + "px";
-    
-            setProposedShipCellsNums(10);
+            proposedShipCellsNums = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
             checkIfAllProposedShipCellsNumsAreFree();
 
             while (shipInitialCellNumber >= shipData.notHeadRows || somePropCellsNotFree) {
-                // console.error("Vertical Cell In Use: " + somePropCellsNotFree);
-                // console.error("Vertical Cell In Use: " + shipInitialCellNumber);
-                // console.error("Vertical: " + cellCoord(shipInitialCellNumber));
-                shipInitialCellNumber = getRandomNum();
-                proposedShipCellsNums = [shipInitialCellNumber];
+                console.error("Vertical Cell In Use: " + somePropCellsNotFree);
+                console.error("Vertical Cell In Use: " + shipInitialCellNumber);
+                console.error("Vertical: " + cellCoord(shipInitialCellNumber));
+
                 somePropCellsNotFree = false;
-                setProposedShipCellsNums(10);
+                shipInitialCellNumber = getRandomNum();
+                proposedShipCellsNums = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
                 checkIfAllProposedShipCellsNumsAreFree();
             }
     
-            occupiedCellsNums[shipData.name] = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, "v");
-            occupiedCellsCoords[shipData.name] = getOccupiedCellsCoords(shipInitialCellNumber, shipData.name, "v");
+            occupiedCellsNums[shipData.name] = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
+            occupiedCellsCoords[shipData.name] = getOccupiedCellsCoords(shipInitialCellNumber, shipData.name, shipOrientation);
         }
 
         switch (shipData.name) {
@@ -102,9 +93,7 @@ function placeShipsInUsersWater(
 
         usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
         usersWaterCell.appendChild(ship);
-        // console.log(occupiedCellsNums);
-        // console.log(occupiedCellsCoords);
-        // console.log(occupiedCells);
+        console.log(occupiedCellsNums[shipData.name]);
     });
 }
 
