@@ -8,28 +8,26 @@ function changeShipOrientation(e, ships, shipName, currentCellNum, cellCoord, ge
     let dblclickShipProposedCellsNums = [];
     let somePropCellsNotFree = false;
 
-    (function getShipData() {
-        for (const obj of ships) {
-            if  (obj.name === shipName) {
-                shipData = obj;
-            }
+    // Get the double-clicked ship's data:
+    for (const obj of ships) {
+        if  (obj.name === shipName) {
+            shipData = obj;
         }
-    })();
+    }
+    
+    // Get the cells occupied by all the ships:
+    allShipsOccupiedCellsNums = [...new Set([
+        ...occupiedCellsNums.aircraftCarrier,
+        ...occupiedCellsNums.battleship,
+        ...occupiedCellsNums.cruiser,
+        ...occupiedCellsNums.submarine,
+        ...occupiedCellsNums.destroyer
+    ])];
 
-    (function getAllShipsOccupiedCellsNums() {
-        allShipsOccupiedCellsNums = [...new Set([
-            ...occupiedCellsNums.aircraftCarrier,
-            ...occupiedCellsNums.battleship,
-            ...occupiedCellsNums.cruiser,
-            ...occupiedCellsNums.submarine,
-            ...occupiedCellsNums.destroyer
-        ])];
-    })();
-
-    (function removeDblclickShipHeadCellFromAllShipsOccCellsNumsArr() {
-        console.log(dblclickShipHeadCellNum);
-        allShipsOccupiedCellsNums = allShipsOccupiedCellsNums.filter(n => n !== dblclickShipHeadCellNum);
-    })();
+    console.log(dblclickShipHeadCellNum);
+    
+    // Remove the double-clicked ship's head cell from the allShipsOccupiedCellsNums array:
+    allShipsOccupiedCellsNums = allShipsOccupiedCellsNums.filter(n => n !== dblclickShipHeadCellNum);
 
     function checkIfAllProposedShipCellsNumsAreFree() {
         for (let i = 0; i < dblclickShipProposedCellsNums.length; i++) {
