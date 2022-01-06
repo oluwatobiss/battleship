@@ -1,13 +1,14 @@
-function placeShipsInUsersWater(
+function placeShipsInWater(
+    owner,
     ships, 
     cellCoord, 
     getOccupiedCellsNums, 
     getOccupiedCellsCoords, 
-    airCurrCell, 
-    batCurrCell, 
-    cruCurrCell, 
-    subCurrCell, 
-    desCurrCell,
+    airCurrHeadCell, 
+    batCurrHeadCell, 
+    cruCurrHeadCell, 
+    subCurrHeadCell, 
+    desCurrHeadCell,
     occupiedCellsNums,
     occupiedCellsCoords
     ) {
@@ -29,8 +30,10 @@ function placeShipsInUsersWater(
         let somePropCellsNotFree = false;
         let usersWaterCell = null;
     
-        ship.setAttribute("id", shipData.id);
-        ship.setAttribute("data-orientation", shipOrientation);
+        if (owner === "user") {
+            ship.setAttribute("id", shipData.id);
+            ship.setAttribute("data-orientation", shipOrientation);
+        }
 
         function checkIfAllProposedShipCellsNumsAreFree() {
             for (let i = 0; i < proposedShipCellsNums.length; i++) {
@@ -42,9 +45,11 @@ function placeShipsInUsersWater(
         }
         
         if (shipOrientation === "h") {
-            ship.style.width = cellSize * shipData.length + "px";
-            ship.style.height = cellSize + "px";
-    
+            if (owner === "user") {
+                ship.style.width = cellSize * shipData.length + "px";
+                ship.style.height = cellSize + "px";
+            }
+            
             proposedShipCellsNums = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
             checkIfAllProposedShipCellsNumsAreFree();
 
@@ -62,8 +67,11 @@ function placeShipsInUsersWater(
             occupiedCellsNums[shipData.name] = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
             occupiedCellsCoords[shipData.name] = getOccupiedCellsCoords(shipInitialCellNumber, shipData.name, shipOrientation);
         } else {
-            ship.style.width = cellSize + "px";
-            ship.style.height = cellSize * shipData.length + "px";
+            if (owner === "user") {
+                ship.style.width = cellSize + "px";
+                ship.style.height = cellSize * shipData.length + "px";
+            }
+
             proposedShipCellsNums = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
             checkIfAllProposedShipCellsNumsAreFree();
 
@@ -83,18 +91,21 @@ function placeShipsInUsersWater(
         }
 
         switch (shipData.name) {
-            case "aircraftCarrier": airCurrCell.num = shipInitialCellNumber; break;
-            case "battleship": batCurrCell.num = shipInitialCellNumber; break;
-            case "cruiser": cruCurrCell.num = shipInitialCellNumber; break;
-            case "submarine": subCurrCell.num = shipInitialCellNumber; break;
-            case "destroyer": desCurrCell.num = shipInitialCellNumber; break;
+            case "aircraftCarrier": airCurrHeadCell.num = shipInitialCellNumber; break;
+            case "battleship": batCurrHeadCell.num = shipInitialCellNumber; break;
+            case "cruiser": cruCurrHeadCell.num = shipInitialCellNumber; break;
+            case "submarine": subCurrHeadCell.num = shipInitialCellNumber; break;
+            case "destroyer": desCurrHeadCell.num = shipInitialCellNumber; break;
             default: console.error("Not a valid ship name");
         }
 
-        usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
-        usersWaterCell.appendChild(ship);
-        console.log(occupiedCellsNums[shipData.name]);
+        if (owner === "user") {
+            usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
+            usersWaterCell.appendChild(ship);
+        }
+
+        console.log(owner + "'s " + shipData.name + ": " + occupiedCellsNums[shipData.name]);
     });
 }
 
-export default placeShipsInUsersWater;
+export default placeShipsInWater;

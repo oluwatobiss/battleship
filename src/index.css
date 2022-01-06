@@ -81,8 +81,9 @@ main {
 }
 
 #aircraft-carrier, #battleship, #cruiser, #submarine, #destroyer {
-    background-color: chocolate;
-    border: 1.5px solid red;
+    box-sizing: border-box;
+    border: 2px solid rgb(85,107,47);
+    background-color: rgb(85,107,47, .05);
     position: absolute;
     top: 0;
     left: 0;
