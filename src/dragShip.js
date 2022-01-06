@@ -5,7 +5,7 @@ function dragShip(id, name, shipAxisPosition, shipCurrHeadCell, getOccupiedCells
     let draggedShipCurrOccupiedCellsNums = null;
     let draggedShipCurrAxisPosition = null;
     let allShipsOccupiedCellsNums = null;
-    let draggedShipProposedCellsNums = null;
+    let draggedShipProposedCellsNums = [];
     let somePropCellsNotFree = false;
 
     function getAllShipsOccupiedCellsNums() {

@@ -39,11 +39,11 @@ const occupiedCellsCoords = {
     destroyer: []
 };
 
-const changeAircraftCarrierOrientation = e => changeShipOrientation(e, ships, "aircraftCarrier", aircraftCarrierCurrCellNum.num, checkCellCoordinate);
-const changeBattleshipOrientation = e => changeShipOrientation(e, ships, "battleship", battleshipCurrCellNum.num, checkCellCoordinate);
-const changeCruiserOrientation = e => changeShipOrientation(e, ships, "cruiser", cruiserCurrCellNum.num, checkCellCoordinate);
-const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "submarine", submarineCurrCellNum.num, checkCellCoordinate);
-const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "destroyer", destroyerCurrCellNum.num, checkCellCoordinate);
+const changeAircraftCarrierOrientation = e => changeShipOrientation(e, ships, "aircraftCarrier", aircraftCarrierCurrCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, occupiedCellsNums);
+const changeBattleshipOrientation = e => changeShipOrientation(e, ships, "battleship", battleshipCurrCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, occupiedCellsNums);
+const changeCruiserOrientation = e => changeShipOrientation(e, ships, "cruiser", cruiserCurrCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, occupiedCellsNums);
+const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "submarine", submarineCurrCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, occupiedCellsNums);
+const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "destroyer", destroyerCurrCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, occupiedCellsNums);
 
 function Body() {
     useEffect(() => {
