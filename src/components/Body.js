@@ -12,6 +12,9 @@ import dragShip from "../dragShip";
 import placeShipsInDockArea from "../placeShipsInDockArea";
 import GameButton from "./GameButton";
 
+let gameOver = false;
+let pcCells = null;
+let shipsInDockingArea = null;
 let userAircraftCarrCurrHeadCellNum = { num: null };
 let userBattleshipCurrHeadCellNum = { num: null };
 let userCruiserCurrHeadCellNum = { num: null };
@@ -22,7 +25,6 @@ let pcBattleshipCurrHeadCellNum = { num: null };
 let pcCruiserCurrHeadCellNum = { num: null };
 let pcSubmarineCurrHeadCellNum = { num: null };
 let pcDestroyerCurrHeadCellNum = { num: null };
-let pcCells = null;
 
 const ships = shipFactory();
 const aircraftCarrierAxisPosition = { x: 0, y: 0 };
@@ -66,7 +68,7 @@ const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "submari
 const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "destroyer", userDestroyerCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
 
 function addHitOrMissMark() {
-    if (this.style.backgroundColor === "") {
+    if (!this.style.backgroundColor && !gameOver) {
         const clickedCellNum = Number(this.id.slice(8));
         const pcShipsOccupiedCells = [...new Set([
             ...pcOccupiedCellsNums.aircraftCarrier,
@@ -79,8 +81,17 @@ function addHitOrMissMark() {
         console.log(pcShipsOccupiedCells);
 
         if (pcShipsOccupiedCells.includes(clickedCellNum)) {
-            console.log("INCLUDED!")
             this.style.backgroundColor = "#fd5e53";
+            // Track ships' life:
+            for (const shipName in pcOccupiedCellsNums) {
+                if (pcOccupiedCellsNums[shipName].includes(clickedCellNum)) {
+                    for (let i = 0; i < ships.length; i++) {
+                        if (ships[i].name === shipName) {
+                            ships[i].life -= 1;
+                        }
+                    }
+                }
+            }
         } else {
             this.innerText = "•";
             this.style.backgroundColor = "#e5e4e2"; 
@@ -91,7 +102,7 @@ function addHitOrMissMark() {
 }
 
 function addBorder() {
-    if (this.style.backgroundColor === "") {
+    if (!this.style.backgroundColor && !gameOver) {
         this.style.border = "1px solid brown";
         this.style.cursor = "pointer";
     }
@@ -188,6 +199,9 @@ function Body() {
         );
 
         pcCells = document.querySelectorAll("div[id^='pc-cell-']");
+        shipsInDockingArea = document.querySelectorAll(".pc-ships .ship-in-docking-area");
+
+        console.log(shipsInDockingArea);
 
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);
         document.getElementById("battleship").addEventListener("dblclick", changeBattleshipOrientation);

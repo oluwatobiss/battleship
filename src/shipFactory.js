@@ -6,6 +6,7 @@ function shipFactory() {
             notHeadColumns: /G|H|I|J/,
             notHeadRows: 60,
             length: 5,
+            life: 5,
         },
         {
             name: "battleship",
@@ -13,6 +14,7 @@ function shipFactory() {
             notHeadColumns: /H|I|J/,
             notHeadRows: 70,
             length: 4,
+            life: 4,
         },
         {
             name: "cruiser",
@@ -20,6 +22,7 @@ function shipFactory() {
             notHeadColumns: /I|J/,
             notHeadRows: 80,
             length: 3,
+            life: 3,
         },
         {
             name: "submarine",
@@ -27,6 +30,7 @@ function shipFactory() {
             notHeadColumns: /I|J/,
             notHeadRows: 80,
             length: 3,
+            life: 3,
         },
         {
             name: "destroyer",
@@ -34,6 +38,7 @@ function shipFactory() {
             notHeadColumns: /J/,
             notHeadRows: 90,
             length: 2,
+            life: 2,
         }
     ]
 

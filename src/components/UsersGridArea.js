@@ -1,11 +1,11 @@
 import GameBoard from "./GameBoard";
-import Battleships from "./Battleships";
+import BattleshipsDock from "./BattleshipsDock";
 
 function UsersGridArea() {
     return (
         <div className="board-n-ships">
             <GameBoard boardOwner="users-board" waterOwner="users-water" />
-            <Battleships shipOwner="users-ships" />
+            <BattleshipsDock shipOwner="users-ships" />
             <p>Your Battleships</p>
         </div>
     )
