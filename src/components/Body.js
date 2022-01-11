@@ -22,6 +22,7 @@ let pcBattleshipCurrHeadCellNum = { num: null };
 let pcCruiserCurrHeadCellNum = { num: null };
 let pcSubmarineCurrHeadCellNum = { num: null };
 let pcDestroyerCurrHeadCellNum = { num: null };
+let pcCells = null;
 
 const ships = shipFactory();
 const aircraftCarrierAxisPosition = { x: 0, y: 0 };
@@ -63,6 +64,43 @@ const changeBattleshipOrientation = e => changeShipOrientation(e, ships, "battle
 const changeCruiserOrientation = e => changeShipOrientation(e, ships, "cruiser", userCruiserCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
 const changeSubmarineOrientation = e => changeShipOrientation(e, ships, "submarine", userSubmarineCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
 const changeDestroyerOrientation = e => changeShipOrientation(e, ships, "destroyer", userDestroyerCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
+
+function addHitOrMissMark() {
+    if (this.style.backgroundColor === "") {
+        const clickedCellNum = Number(this.id.slice(8));
+        const pcShipsOccupiedCells = [...new Set([
+            ...pcOccupiedCellsNums.aircraftCarrier,
+            ...pcOccupiedCellsNums.battleship,
+            ...pcOccupiedCellsNums.cruiser,
+            ...pcOccupiedCellsNums.submarine,
+            ...pcOccupiedCellsNums.destroyer
+        ])];
+
+        console.log(pcShipsOccupiedCells);
+
+        if (pcShipsOccupiedCells.includes(clickedCellNum)) {
+            console.log("INCLUDED!")
+            this.style.backgroundColor = "#fd5e53";
+        } else {
+            this.innerText = "•";
+            this.style.backgroundColor = "#e5e4e2"; 
+        }
+
+        console.log(clickedCellNum);
+    }
+}
+
+function addBorder() {
+    if (this.style.backgroundColor === "") {
+        this.style.border = "1px solid brown";
+        this.style.cursor = "pointer";
+    }
+}
+
+function removeBorder() {
+    this.style.border = "";
+    this.style.cursor = "";
+}
 
 function Body() {
     useEffect(() => {
@@ -149,11 +187,16 @@ function Body() {
             userOccupiedCellsCoords
         );
 
+        pcCells = document.querySelectorAll("div[id^='pc-cell-']");
+
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);
         document.getElementById("battleship").addEventListener("dblclick", changeBattleshipOrientation);
         document.getElementById("cruiser").addEventListener("dblclick", changeCruiserOrientation);
         document.getElementById("submarine").addEventListener("dblclick", changeSubmarineOrientation);
         document.getElementById("destroyer").addEventListener("dblclick", changeDestroyerOrientation);
+        pcCells.forEach(c => c.addEventListener("click", addHitOrMissMark));
+        pcCells.forEach(c => c.addEventListener("mouseenter", addBorder));
+        pcCells.forEach(c => c.addEventListener("mouseleave", removeBorder));
         
         return () => {
             document.getElementById("aircraft-carrier").removeEventListener("dblclick", changeAircraftCarrierOrientation);
@@ -161,6 +204,9 @@ function Body() {
             document.getElementById("cruiser").removeEventListener("dblclick", changeCruiserOrientation);
             document.getElementById("submarine").removeEventListener("dblclick", changeSubmarineOrientation);
             document.getElementById("destroyer").removeEventListener("dblclick", changeDestroyerOrientation);
+            pcCells.forEach(c => c.removeEventListener("click", addHitOrMissMark));
+            pcCells.forEach(c => c.removeEventListener("mouseenter", addBorder));
+            pcCells.forEach(c => c.removeEventListener("mouseleave", removeBorder));
         }
     }, []);
 
