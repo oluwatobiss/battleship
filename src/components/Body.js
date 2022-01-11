@@ -82,12 +82,15 @@ function addHitOrMissMark() {
 
         if (pcShipsOccupiedCells.includes(clickedCellNum)) {
             this.style.backgroundColor = "#fd5e53";
-            // Track ships' life:
+            // Track ships' life and show when ships get sunk:
             for (const shipName in pcOccupiedCellsNums) {
                 if (pcOccupiedCellsNums[shipName].includes(clickedCellNum)) {
                     for (let i = 0; i < ships.length; i++) {
                         if (ships[i].name === shipName) {
                             ships[i].life -= 1;
+                        }
+                        if (ships[i].life === 0) {
+                            shipsInDockingArea[i].style.backgroundColor = "#fd5e53";
                         }
                     }
                 }
