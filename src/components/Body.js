@@ -1,4 +1,5 @@
-import {useEffect} from "react";
+import { useEffect, useState } from "react";
+import interact from 'interactjs';
 import UsersGridArea from "./UsersGridArea";
 import ComputersGridArea from "./ComputersGridArea";
 import createGameBoardCoordinate from "../createGameBoardCoordinate";
@@ -10,9 +11,11 @@ import { getShipOccupiedCellsNumbers, getShipOccupiedCellsCoordinates } from "..
 import changeShipOrientation from "../changeShipOrientation";
 import dragShip from "../dragShip";
 import placeShipsInDockArea from "../placeShipsInDockArea";
-import GameButton from "./GameButton";
+import addHitOrMissMark from "../addHitOrMissMark";
 
 let gameOver = false;
+let startGameBtn = null;
+let restartGameBtn = null;
 let pcCells = null;
 let userCells = null;
 let userCellsShot = [];
@@ -65,12 +68,6 @@ const pcOccupiedCellsCoords = {
     destroyer: []
 };
 
-const changeAircraftCarrierOrientation = e => changeShipOrientation(e, userShips, "aircraftCarrier", userAircraftCarrCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
-const changeBattleshipOrientation = e => changeShipOrientation(e, userShips, "battleship", userBattleshipCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
-const changeCruiserOrientation = e => changeShipOrientation(e, userShips, "cruiser", userCruiserCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
-const changeSubmarineOrientation = e => changeShipOrientation(e, userShips, "submarine", userSubmarineCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
-const changeDestroyerOrientation = e => changeShipOrientation(e, userShips, "destroyer", userDestroyerCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
-
 function shootShip() {
     if (!this.style.backgroundColor && !gameOver) {
         addHitOrMissMark("pc", this, pcOccupiedCellsNums, pcShipsInDockingArea, pcShips);
@@ -92,41 +89,9 @@ function shootShip() {
 
 function checkIfGameIsOver(dockingAreaShips) {
     if (Array.from(dockingAreaShips).every(i => i.style.backgroundColor)) {
-        console.log(dockingAreaShips);
         gameOver = true;
         console.log("GAMEOVER!!!!");
     }
-}
-
-function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea, ships) {
-    const cellFired = cellOwner === "pc" ? Number(cell.id.slice(8)) : Number(cell.id.slice(10));
-    const pcShipsOccupiedCells = [...new Set([
-        ...occupiedCellsNums.aircraftCarrier,
-        ...occupiedCellsNums.battleship,
-        ...occupiedCellsNums.cruiser,
-        ...occupiedCellsNums.submarine,
-        ...occupiedCellsNums.destroyer
-    ])];
-
-    console.log(pcShipsOccupiedCells);
-
-    if (pcShipsOccupiedCells.includes(cellFired)) {
-        cell.style.backgroundColor = "#fd5e53";
-        // Track userShips' life and show when userShips get sunk:
-        for (const shipName in occupiedCellsNums) {
-            if (occupiedCellsNums[shipName].includes(cellFired)) {
-                for (let i = 0; i < ships.length; i++) {
-                    (ships[i].name === shipName) && (ships[i].life -= 1);
-                    (ships[i].life === 0) && (shipsInDockingArea[i].style.backgroundColor = "#fd5e53");
-                }
-            }
-        }
-    } else {
-        cell.innerText = "•";
-        cell.style.backgroundColor = "#e5e4e2"; 
-    }
-
-    console.log(cellFired);
 }
 
 function addBorder() {
@@ -142,6 +107,7 @@ function removeBorder() {
 }
 
 function Body() {
+    const [gameStarted, setGameStarted] = useState(false);
     useEffect(() => {
         createGameBoardCoordinate();
         createWaterCells();
@@ -175,7 +141,33 @@ function Body() {
         );
         placeShipsInDockArea();
 
+        pcCells = document.querySelectorAll("div[id^='pc-cell-']");
+        userCells = document.querySelectorAll("div[id^='user-cell-']");
+        pcShipsInDockingArea = document.querySelectorAll(".pc-ships .ship-in-docking-area");
+        userShipsInDockingArea = document.querySelectorAll(".user-ships .ship-in-docking-area");
+        startGameBtn = document.getElementById("start-game-btn");
+        restartGameBtn = document.getElementById("restart-game-btn");
+
+        pcCells.forEach(c => c.addEventListener("click", shootShip));
+        pcCells.forEach(c => c.addEventListener("mouseenter", addBorder));
+        pcCells.forEach(c => c.addEventListener("mouseleave", removeBorder));
+        
+        return () => {
+            pcCells.forEach(c => c.removeEventListener("click", shootShip));
+            pcCells.forEach(c => c.removeEventListener("mouseenter", addBorder));
+            pcCells.forEach(c => c.removeEventListener("mouseleave", removeBorder));
+        }
+    }, []);
+    
+    useEffect(() => {
+        const changeAircraftCarrierOrientation = e => changeShipOrientation(gameStarted, e, userShips, "aircraftCarrier", userAircraftCarrCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
+        const changeBattleshipOrientation = e => changeShipOrientation(gameStarted, e, userShips, "battleship", userBattleshipCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
+        const changeCruiserOrientation = e => changeShipOrientation(gameStarted, e, userShips, "cruiser", userCruiserCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
+        const changeSubmarineOrientation = e => changeShipOrientation(gameStarted, e, userShips, "submarine", userSubmarineCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
+        const changeDestroyerOrientation = e => changeShipOrientation(gameStarted, e, userShips, "destroyer", userDestroyerCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
+        
         dragShip(
+            gameStarted,
             "#aircraft-carrier", 
             "aircraftCarrier",
             aircraftCarrierAxisPosition, 
@@ -186,6 +178,7 @@ function Body() {
             userOccupiedCellsCoords
         );
         dragShip(
+            gameStarted,
             "#battleship", 
             "battleship",
             battleShipAxisPosition, 
@@ -196,6 +189,7 @@ function Body() {
             userOccupiedCellsCoords
         );
         dragShip(
+            gameStarted,
             "#cruiser", 
             "cruiser",
             cruiserAxisPosition, 
@@ -206,6 +200,7 @@ function Body() {
             userOccupiedCellsCoords
         );
         dragShip(
+            gameStarted,
             "#submarine", 
             "submarine",
             submarineAxisPosition, 
@@ -216,6 +211,7 @@ function Body() {
             userOccupiedCellsCoords
         );
         dragShip(
+            gameStarted,
             "#destroyer", 
             "destroyer",
             destroyerAxisPosition, 
@@ -226,31 +222,31 @@ function Body() {
             userOccupiedCellsCoords
         );
 
-        pcCells = document.querySelectorAll("div[id^='pc-cell-']");
-        userCells = document.querySelectorAll("div[id^='user-cell-']");
-        pcShipsInDockingArea = document.querySelectorAll(".pc-ships .ship-in-docking-area");
-        userShipsInDockingArea = document.querySelectorAll(".user-ships .ship-in-docking-area");
-
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);
         document.getElementById("battleship").addEventListener("dblclick", changeBattleshipOrientation);
         document.getElementById("cruiser").addEventListener("dblclick", changeCruiserOrientation);
         document.getElementById("submarine").addEventListener("dblclick", changeSubmarineOrientation);
         document.getElementById("destroyer").addEventListener("dblclick", changeDestroyerOrientation);
-        pcCells.forEach(c => c.addEventListener("click", shootShip));
-        pcCells.forEach(c => c.addEventListener("mouseenter", addBorder));
-        pcCells.forEach(c => c.addEventListener("mouseleave", removeBorder));
-        
+
         return () => {
             document.getElementById("aircraft-carrier").removeEventListener("dblclick", changeAircraftCarrierOrientation);
             document.getElementById("battleship").removeEventListener("dblclick", changeBattleshipOrientation);
             document.getElementById("cruiser").removeEventListener("dblclick", changeCruiserOrientation);
             document.getElementById("submarine").removeEventListener("dblclick", changeSubmarineOrientation);
             document.getElementById("destroyer").removeEventListener("dblclick", changeDestroyerOrientation);
-            pcCells.forEach(c => c.removeEventListener("click", shootShip));
-            pcCells.forEach(c => c.removeEventListener("mouseenter", addBorder));
-            pcCells.forEach(c => c.removeEventListener("mouseleave", removeBorder));
         }
-    }, []);
+    }, [gameStarted])
+    
+    function handleStartGameBtnClickEvent() {
+        interact("#aircraft-carrier").unset();
+        interact("#battleship").unset();
+        interact("#cruiser").unset();
+        interact("#submarine").unset();
+        interact("#destroyer").unset();
+        setGameStarted(true);
+        startGameBtn.style.display = "none";
+        restartGameBtn.style.display = "block";
+    }
 
     return (
         <div>
@@ -262,7 +258,8 @@ function Body() {
                 <ComputersGridArea />
             </section>
             <section id="button-area">
-                <GameButton />
+                <button id="start-game-btn" onClick={handleStartGameBtnClickEvent}>Start the Game</button>
+                <button id="restart-game-btn">Restart Game</button>
             </section>
         </div>
     );

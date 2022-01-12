@@ -74,12 +74,6 @@ main {
     background-color: lightgrey;
 }
 
-#footer {
-    padding: 0 50px;
-    display: flex;
-    justify-content: space-between;
-}
-
 #aircraft-carrier, #battleship, #cruiser, #submarine, #destroyer {
     box-sizing: border-box;
     border: 2px solid rgb(85,107,47);
@@ -88,4 +82,24 @@ main {
     top: 0;
     left: 0;
     z-index: 1;
+}
+
+button {
+    display: block;
+    margin: 0 auto;
+    padding: 7px 20px;
+    border: 1px solid dimgrey;
+    border-radius: 3px;
+    background: transparent;
+    font-size: .9rem;
+    color: #343434;
+    cursor: pointer;
+}
+
+#restart-game-btn { display: none }
+
+#footer {
+    padding: 0 50px;
+    display: flex;
+    justify-content: space-between;
 }
