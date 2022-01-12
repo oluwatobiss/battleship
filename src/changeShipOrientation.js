@@ -24,8 +24,6 @@ function changeShipOrientation(gameStarted, e, ships, shipName, currentCellNum, 
             ...occupiedCellsNums.submarine,
             ...occupiedCellsNums.destroyer
         ])];
-    
-        console.log(dblclickShipHeadCellNum);
         
         // Remove the double-clicked ship's head cell from the allShipsOccupiedCellsNums array:
         allShipsOccupiedCellsNums = allShipsOccupiedCellsNums.filter(n => n !== dblclickShipHeadCellNum);

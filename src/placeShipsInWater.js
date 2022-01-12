@@ -54,10 +54,6 @@ function placeShipsInWater(
             checkIfAllProposedShipCellsNumsAreFree();
 
             while (shipData.notHeadColumns.test(cellCoord(shipInitialCellNumber)) || somePropCellsNotFree) {
-                console.error("Horizontal Cell In Use: " + somePropCellsNotFree);
-                console.error("Horizontal Cell In Use: " + shipInitialCellNumber);
-                console.error("Horizontal: " + cellCoord(shipInitialCellNumber));
-
                 somePropCellsNotFree = false;
                 shipInitialCellNumber = getRandomNum();
                 proposedShipCellsNums = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
@@ -76,10 +72,6 @@ function placeShipsInWater(
             checkIfAllProposedShipCellsNumsAreFree();
 
             while (shipInitialCellNumber >= shipData.notHeadRows || somePropCellsNotFree) {
-                console.error("Vertical Cell In Use: " + somePropCellsNotFree);
-                console.error("Vertical Cell In Use: " + shipInitialCellNumber);
-                console.error("Vertical: " + cellCoord(shipInitialCellNumber));
-
                 somePropCellsNotFree = false;
                 shipInitialCellNumber = getRandomNum();
                 proposedShipCellsNums = getOccupiedCellsNums(shipInitialCellNumber, shipData.name, shipOrientation);
@@ -103,8 +95,6 @@ function placeShipsInWater(
             usersWaterCell = document.getElementsByClassName("users-water")[0].children[shipInitialCellNumber];
             usersWaterCell.appendChild(ship);
         }
-
-        console.log(owner + "'s " + shipData.name + ": " + occupiedCellsNums[shipData.name]);
     });
 }
 

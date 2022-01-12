@@ -37,7 +37,7 @@ function dragShip(gameStarted, id, name, shipAxisPosition, shipCurrHeadCell, get
         interact(id).draggable({      
             modifiers: [
                 interact.modifiers.snap({ 
-                    targets: [interact.snappers.grid({ x: 40, y: 40 })],
+                    targets: [interact.snappers.grid({ x: 35, y: 35 })],
                     relativePoints: [{ x: 0, y: 0 }],
                     offset: 'self',
                 }),
@@ -62,7 +62,7 @@ function dragShip(gameStarted, id, name, shipAxisPosition, shipCurrHeadCell, get
             e.target.style.transform =
             `translate(${shipAxisPosition.x}px, ${shipAxisPosition.y}px)`;
     
-            shipCurrHeadCell.num = Math.round(shipCurrHeadCell.num + ((e.dx/40) + (e.dy/4)));
+            shipCurrHeadCell.num = Math.round(shipCurrHeadCell.num + ((e.dx/35) + (e.dy/3.5)));
             occupiedCellsNums[name] = getOccupiedCellsNums(shipCurrHeadCell.num, name, orientation);
             occupiedCellsCoords[name] = getOccupiedCellsCoords(shipCurrHeadCell.num, name, orientation);
         })

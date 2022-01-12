@@ -8,8 +8,6 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
         ...occupiedCellsNums.destroyer
     ])];
 
-    console.log(pcShipsOccupiedCells);
-
     if (pcShipsOccupiedCells.includes(cellFired)) {
         cell.style.backgroundColor = "#fd5e53";
         // Track userShips' life and show when userShips get sunk:
@@ -25,8 +23,6 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
         cell.innerText = "•";
         cell.style.backgroundColor = "#e5e4e2"; 
     }
-
-    console.log(cellFired);
 }
 
 export default addHitOrMissMark;

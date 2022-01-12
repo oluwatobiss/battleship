@@ -14,6 +14,8 @@ import placeShipsInDockArea from "../placeShipsInDockArea";
 import addHitOrMissMark from "../addHitOrMissMark";
 
 let gameOver = false;
+let messageBoard = null;
+let gameInfo = null;
 let startGameBtn = null;
 let restartGameBtn = null;
 let pcCells = null;
@@ -109,6 +111,9 @@ function Body() {
         userShipsInDockingArea = document.querySelectorAll(".user-ships .ship-in-docking-area");
         startGameBtn = document.getElementById("start-game-btn");
         restartGameBtn = document.getElementById("restart-game-btn");
+        messageBoard = document.getElementById("info-area");
+        gameInfo = document.getElementById("game-info");
+        gameInfo.innerText = "Position your ships";
     }, []);
     
     useEffect(() => {
@@ -117,7 +122,8 @@ function Body() {
         const changeCruiserOrientation = e => changeShipOrientation(gameStarted, e, userShips, "cruiser", userCruiserCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
         const changeSubmarineOrientation = e => changeShipOrientation(gameStarted, e, userShips, "submarine", userSubmarineCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
         const changeDestroyerOrientation = e => changeShipOrientation(gameStarted, e, userShips, "destroyer", userDestroyerCurrHeadCellNum.num, checkCellCoordinate, getShipOccupiedCellsNumbers, userOccupiedCellsNums);
-        
+        const checkIfGameIsOver = dockingAreaShips => (Array.from(dockingAreaShips).every(i => i.style.backgroundColor)) && (gameOver = true);
+
         dragShip(
             gameStarted,
             "#aircraft-carrier", 
@@ -186,17 +192,16 @@ function Body() {
             this.style.cursor = "";
         }
 
-        function checkIfGameIsOver(dockingAreaShips) {
-            if (Array.from(dockingAreaShips).every(i => i.style.backgroundColor)) {
-                gameOver = true;
-                console.log("GAMEOVER!!!!");
-            }
-        }
-
         function shootShip() {
             if (gameStarted && !this.style.backgroundColor && !gameOver) {
                 addHitOrMissMark("pc", this, pcOccupiedCellsNums, pcShipsInDockingArea, pcShips);
                 checkIfGameIsOver(pcShipsInDockingArea);
+                if (gameOver) {
+                    messageBoard.style.backgroundColor = "#e9ffdb";
+                    messageBoard.style.borderColor = "green";
+                    gameInfo.style.color = "green";
+                    gameInfo.innerText = "Congratulations!!! You won the Game!";
+                }
                 if (!gameOver) {
                     const getRandomNum = () => Math.floor(Math.random() * 100);
                     let cellNum = getRandomNum();
@@ -208,6 +213,12 @@ function Body() {
                     userCellsShot.push(cellNum);
                     addHitOrMissMark("user", userCells[cellNum], userOccupiedCellsNums, userShipsInDockingArea, userShips);
                     checkIfGameIsOver(userShipsInDockingArea);
+                    if (gameOver) {
+                        messageBoard.style.backgroundColor = "#ffe0f0";
+                        messageBoard.style.borderColor = "red";
+                        gameInfo.style.color = "red";
+                        gameInfo.innerText = "Oops!!! You lost the Game!";
+                    }
                 }
             }
         }
@@ -242,12 +253,16 @@ function Body() {
         setGameStarted(true);
         startGameBtn.style.display = "none";
         restartGameBtn.style.display = "block";
+        messageBoard.style.backgroundColor = "whitesmoke";
+        messageBoard.style.borderColor = "dimgrey";
+        gameInfo.style.color = "dimgrey";
+        gameInfo.innerText = "Game Started";
     }
 
     return (
         <div>
             <section id="info-area">
-                <p>This is the message board</p>
+                <p id="game-info"></p>
             </section>
             <section id="grid-area">
                 <UsersGridArea />
@@ -255,7 +270,7 @@ function Body() {
             </section>
             <section id="button-area">
                 <button id="start-game-btn" onClick={handleStartGameBtnClickEvent}>Start the Game</button>
-                <button id="restart-game-btn">Restart Game</button>
+                <button id="restart-game-btn" onClick={() => window.location.reload()}>Restart Game</button>
             </section>
         </div>
     );
