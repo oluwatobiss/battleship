@@ -68,44 +68,6 @@ const pcOccupiedCellsCoords = {
     destroyer: []
 };
 
-function shootShip() {
-    if (!this.style.backgroundColor && !gameOver) {
-        addHitOrMissMark("pc", this, pcOccupiedCellsNums, pcShipsInDockingArea, pcShips);
-        checkIfGameIsOver(pcShipsInDockingArea);
-        if (!gameOver) {
-            const getRandomNum = () => Math.floor(Math.random() * 100);
-            let cellNum = getRandomNum();
-    
-            while (userCellsShot.includes(cellNum)) {
-                cellNum = getRandomNum();
-            }
-    
-            userCellsShot.push(cellNum);
-            addHitOrMissMark("user", userCells[cellNum], userOccupiedCellsNums, userShipsInDockingArea, userShips);
-            checkIfGameIsOver(userShipsInDockingArea);
-        }
-    }
-}
-
-function checkIfGameIsOver(dockingAreaShips) {
-    if (Array.from(dockingAreaShips).every(i => i.style.backgroundColor)) {
-        gameOver = true;
-        console.log("GAMEOVER!!!!");
-    }
-}
-
-function addBorder() {
-    if (!this.style.backgroundColor && !gameOver) {
-        this.style.border = "1px solid brown";
-        this.style.cursor = "pointer";
-    }
-}
-
-function removeBorder() {
-    this.style.border = "";
-    this.style.cursor = "";
-}
-
 function Body() {
     const [gameStarted, setGameStarted] = useState(false);
     useEffect(() => {
@@ -147,16 +109,6 @@ function Body() {
         userShipsInDockingArea = document.querySelectorAll(".user-ships .ship-in-docking-area");
         startGameBtn = document.getElementById("start-game-btn");
         restartGameBtn = document.getElementById("restart-game-btn");
-
-        pcCells.forEach(c => c.addEventListener("click", shootShip));
-        pcCells.forEach(c => c.addEventListener("mouseenter", addBorder));
-        pcCells.forEach(c => c.addEventListener("mouseleave", removeBorder));
-        
-        return () => {
-            pcCells.forEach(c => c.removeEventListener("click", shootShip));
-            pcCells.forEach(c => c.removeEventListener("mouseenter", addBorder));
-            pcCells.forEach(c => c.removeEventListener("mouseleave", removeBorder));
-        }
     }, []);
     
     useEffect(() => {
@@ -222,11 +174,52 @@ function Body() {
             userOccupiedCellsCoords
         );
 
+        function addBorder() {
+            if (gameStarted && !this.style.backgroundColor && !gameOver) {
+                this.style.border = "1px solid brown";
+                this.style.cursor = "pointer";
+            }
+        }
+        
+        function removeBorder() {
+            this.style.border = "";
+            this.style.cursor = "";
+        }
+
+        function checkIfGameIsOver(dockingAreaShips) {
+            if (Array.from(dockingAreaShips).every(i => i.style.backgroundColor)) {
+                gameOver = true;
+                console.log("GAMEOVER!!!!");
+            }
+        }
+
+        function shootShip() {
+            if (gameStarted && !this.style.backgroundColor && !gameOver) {
+                addHitOrMissMark("pc", this, pcOccupiedCellsNums, pcShipsInDockingArea, pcShips);
+                checkIfGameIsOver(pcShipsInDockingArea);
+                if (!gameOver) {
+                    const getRandomNum = () => Math.floor(Math.random() * 100);
+                    let cellNum = getRandomNum();
+            
+                    while (userCellsShot.includes(cellNum)) {
+                        cellNum = getRandomNum();
+                    }
+            
+                    userCellsShot.push(cellNum);
+                    addHitOrMissMark("user", userCells[cellNum], userOccupiedCellsNums, userShipsInDockingArea, userShips);
+                    checkIfGameIsOver(userShipsInDockingArea);
+                }
+            }
+        }
+
         document.getElementById("aircraft-carrier").addEventListener("dblclick", changeAircraftCarrierOrientation);
         document.getElementById("battleship").addEventListener("dblclick", changeBattleshipOrientation);
         document.getElementById("cruiser").addEventListener("dblclick", changeCruiserOrientation);
         document.getElementById("submarine").addEventListener("dblclick", changeSubmarineOrientation);
         document.getElementById("destroyer").addEventListener("dblclick", changeDestroyerOrientation);
+        pcCells.forEach(c => c.addEventListener("click", shootShip));
+        pcCells.forEach(c => c.addEventListener("mouseenter", addBorder));
+        pcCells.forEach(c => c.addEventListener("mouseleave", removeBorder));
 
         return () => {
             document.getElementById("aircraft-carrier").removeEventListener("dblclick", changeAircraftCarrierOrientation);
@@ -234,6 +227,9 @@ function Body() {
             document.getElementById("cruiser").removeEventListener("dblclick", changeCruiserOrientation);
             document.getElementById("submarine").removeEventListener("dblclick", changeSubmarineOrientation);
             document.getElementById("destroyer").removeEventListener("dblclick", changeDestroyerOrientation);
+            pcCells.forEach(c => c.removeEventListener("click", shootShip));
+            pcCells.forEach(c => c.removeEventListener("mouseenter", addBorder));
+            pcCells.forEach(c => c.removeEventListener("mouseleave", removeBorder));
         }
     }, [gameStarted])
     
