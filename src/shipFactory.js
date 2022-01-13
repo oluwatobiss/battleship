@@ -39,9 +39,8 @@ function shipFactory() {
             notHeadRows: 90,
             length: 2,
             life: 2,
-        }
-    ]
-
+        },
+    ];
     return ships;
 }
 

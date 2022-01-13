@@ -21,6 +21,7 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
         }
     } else {
         cell.innerText = "•";
+        cell.style.color = "dimgrey"; 
         cell.style.backgroundColor = "#e5e4e2"; 
     }
 }

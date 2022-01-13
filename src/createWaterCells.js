@@ -1,6 +1,5 @@
 function createWaterCells() {
     const gameWater = document.getElementsByClassName("game-water");
-
     [...gameWater].forEach(board => {
         for (let i = 0; i < 100; i++) {
             const cell = document.createElement('div');
