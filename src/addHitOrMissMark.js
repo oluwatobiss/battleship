@@ -1,6 +1,6 @@
 function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea, ships) {
     const cellFired = cellOwner === "pc" ? Number(cell.id.slice(8)) : Number(cell.id.slice(10));
-    const pcShipsOccupiedCells = [...new Set([
+    const shipsOccupiedCells = [...new Set([
         ...occupiedCellsNums.aircraftCarrier,
         ...occupiedCellsNums.battleship,
         ...occupiedCellsNums.cruiser,
@@ -8,7 +8,7 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
         ...occupiedCellsNums.destroyer
     ])];
 
-    if (pcShipsOccupiedCells.includes(cellFired)) {
+    if (shipsOccupiedCells.includes(cellFired)) {
         cell.style.backgroundColor = "#fd5e53";
         // Track userShips' life and show when userShips get sunk:
         for (const shipName in occupiedCellsNums) {
