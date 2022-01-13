@@ -1,17 +1,10 @@
 import { useEffect, useState } from "react";
 import interact from 'interactjs';
-import UsersGridArea from "./UsersGridArea";
-import ComputersGridArea from "./ComputersGridArea";
-import createGameBoardCoordinate from "../createGameBoardCoordinate";
-import checkCellCoordinate from "../checkCellCoordinate";
-import createWaterCells from "../createWaterCells";
-import placeShipsInWater from "../placeShipsInWater";
-import shipFactory from "../shipFactory";
-import { getShipOccupiedCellsNumbers, getShipOccupiedCellsCoordinates } from "../getShipOccupiedCells";
-import changeShipOrientation from "../changeShipOrientation";
-import dragShip from "../dragShip";
-import placeShipsInDockArea from "../placeShipsInDockArea";
-import addHitOrMissMark from "../addHitOrMissMark";
+import { 
+    UsersGridArea, ComputersGridArea, createGameBoardCoordinate, checkCellCoordinate, createWaterCells,
+    placeShipsInWater, shipFactory, getShipOccupiedCellsNumbers, getShipOccupiedCellsCoordinates,
+    changeShipOrientation, dragShip, placeShipsInDockArea, addHitOrMissMark 
+} from "../aggregator";
 
 let gameOver = false;
 let messageBoard = null;
