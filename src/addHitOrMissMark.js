@@ -10,19 +10,26 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
 
     if (shipsOccupiedCells.includes(cellFired)) {
         cell.style.backgroundColor = "#fd5e53";
-        // Track userShips' life and show when userShips get sunk:
+        // Loop through each ship's name in the occupiedCellsNums array:
         for (const shipName in occupiedCellsNums) {
+            // Find the name of the ship that was fired:
             if (occupiedCellsNums[shipName].includes(cellFired)) {
+                // Loop through the ships in the ships array:
                 for (let i = 0; i < ships.length; i++) {
-                    (ships[i].name === shipName) && (ships[i].life -= 1);
-                    (ships[i].life === 0) && (shipsInDockingArea[i].style.backgroundColor = "#fd5e53");
+                    // Reduce the fired ship's life:
+                    if (ships[i].name === shipName) {
+                        ships[i].life -= 1;
+                        console.log("Life Remaining: " + ships[i].life);
+                    }
+                    // Notify if the fired ship has been sunk:
+                    if (ships[i].life === 0) {
+                        shipsInDockingArea[i].style.backgroundColor = "#fd5e53";
+                    }
                 }
             }
         }
     } else {
-        cell.innerText = "•";
-        cell.style.color = "dimgrey"; 
-        cell.style.backgroundColor = "#e5e4e2"; 
+        cell.style.backgroundColor = "#bcd4e6";
     }
 }
 

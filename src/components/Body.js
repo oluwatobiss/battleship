@@ -3,7 +3,7 @@ import interact from 'interactjs';
 import { 
     UsersGridArea, ComputersGridArea, createGameBoardCoordinate, createWaterCells, placeShipsInWater,
     shipFactory, checkCellCoordinate, getShipOccupiedCellsNumbers, getShipOccupiedCellsCoordinates,
-    placeShipsInDockArea, changeShipOrientation, dragShip, addHitOrMissMark 
+    placeShipsInDockArea, changeShipOrientation, dragShip, addHitOrMissMark, 
 } from "../aggregator";
 
 let gameOver = false;
@@ -34,6 +34,11 @@ const battleShipAxisPosition = { x: 0, y: 0 };
 const cruiserAxisPosition = { x: 0, y: 0 };
 const submarineAxisPosition = { x: 0, y: 0 };
 const destroyerAxisPosition = { x: 0, y: 0 };
+const shipToSink = {
+    shipSunk: false,
+    shipHit: false,
+    refCell: null,
+};
 const userOccupiedCellsNums = {
     aircraftCarrier: [],
     battleship: [],
@@ -201,7 +206,9 @@ function Body() {
             
                     while (userCellsShot.includes(cellNum)) { cellNum = getRandomNum() }
                     userCellsShot.push(cellNum);
-                    addHitOrMissMark("user", userCells[cellNum], userOccupiedCellsNums, userShipsInDockingArea, userShips);
+                    addHitOrMissMark(
+                        "user", userCells[cellNum], userOccupiedCellsNums, userShipsInDockingArea, userShips, userCellsShot, shipToSink, checkCellCoordinate
+                    );
                     checkIfGameIsOver(userShipsInDockingArea);
                     if (gameOver) {
                         messageBoard.style.backgroundColor = "#ffe0f0";

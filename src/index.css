@@ -76,7 +76,7 @@ main {
 .ship-in-docking-area { background-color: lightgrey; }
 
 #aircraft-carrier, #battleship, #cruiser, #submarine, #destroyer {
-    border: 2px solid darkolivegreen;
+    border: 2.4px solid darkolivegreen;
     background-color: rgb(85,107,47, .05);
     position: absolute;
     top: 0;
