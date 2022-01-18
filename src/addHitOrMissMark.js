@@ -28,14 +28,11 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
                     // Reduce the fired ship's life:
                     if (ships[i].name === shipName) {
                         ships[i].life -= 1;
-                        console.log("Life Remaining: " + ships[i].life);
                         // Notify if the fired ship has been sunk:
                         if ((cellOwner === "pc") && (ships[i].life === 0)) {
                             shipsInDockingArea[i].style.backgroundColor = "#fd5e53";
                         }
-    
                         if ((cellOwner === "user") && (ships[i].life === 0)) {
-                            console.log("Sunk turned true!!!")
                             shipToSink.shipSunk = true;
                             shipsInDockingArea[i].style.backgroundColor = "#fd5e53";
                         }
@@ -45,7 +42,6 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
         }
 
         if (cellOwner === "user") {
-            console.log("Attempts: " + shipToSink.numOfAttempts);
             shipToSink.withinAreaFired = true;
             if (shipToSink.numOfAttempts === 1) {
                 shipToSink.refCell = cellFired;
@@ -102,47 +98,30 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
             }
 
             shipToSink.numOfAttempts += 1;
-            if (shipToSink.shipSunk) {
-                console.log(shipToSink);
-                resetShipToSinkObj();
-                console.log(shipToSink);
-            }
-
-            console.log("Next Cell To Shoot: " + shipToSink.nextCellToShoot);
+            shipToSink.shipSunk && resetShipToSinkObj();
         }
     }
     
     if (!shipsOccupiedCells.includes(cellFired)) {
         cell.style.backgroundColor = "#bcd4e6";
-
         if ((cellOwner === "user") && shipToSink.withinAreaFired) {
             if ((shipToSink.numOfAttempts >= 2) && (shipToSink.shootDirection === "r")) {
                 if (!checkCellCoordinate(shipToSink.refCell).includes("A")) {
                     if (!userCellsShot.includes(shipToSink.refCell - 1)) {
-                        console.log(checkCellCoordinate(shipToSink.refCell));
-                        console.log(shipToSink.refCell - 1);
                         shipToSink.nextCellToShoot = shipToSink.refCell - 1;
                         shipToSink.shootDirection = "l";
                     } else if (userCellsShot.includes(shipToSink.refCell - 1) && !userCellsShot.includes(shipToSink.refCell - 10)) {
-                        console.log(checkCellCoordinate(shipToSink.refCell));
-                        console.log(shipToSink.refCell - 10);
                         shipToSink.nextCellToShoot = shipToSink.refCell - 10;
                         shipToSink.shootDirection = "u";
                     } else if (userCellsShot.includes(shipToSink.refCell - 1) && !userCellsShot.includes(shipToSink.refCell - 10)) {
-                        console.log(checkCellCoordinate(shipToSink.refCell));
-                        console.log(shipToSink.refCell + 10);
                         shipToSink.nextCellToShoot = shipToSink.refCell + 10;
                         shipToSink.shootDirection = "d";
                     }
                 } else if (checkCellCoordinate(shipToSink.refCell).includes("A")) {
                     if (!userCellsShot.includes(shipToSink.refCell - 10) && ((shipToSink.refCell - 10) >= 0)) {
-                        console.log(checkCellCoordinate(shipToSink.refCell));
-                        console.log(shipToSink.refCell - 10);
                         shipToSink.nextCellToShoot = shipToSink.refCell - 10;
                         shipToSink.shootDirection = "u";
                     } else if (!userCellsShot.includes(shipToSink.refCell + 10) && ((shipToSink.refCell + 10) <= 99)) {
-                        console.log(checkCellCoordinate(shipToSink.refCell));
-                        console.log(shipToSink.refCell + 10);
                         shipToSink.nextCellToShoot = shipToSink.refCell + 10;
                         shipToSink.shootDirection = "d";
                     }
@@ -163,7 +142,6 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
             }
 
             shipToSink.numOfAttempts += 1;
-            console.log("Next Cell To Shoot: " + shipToSink.nextCellToShoot);
         }
     }
 }

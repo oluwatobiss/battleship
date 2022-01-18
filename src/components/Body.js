@@ -197,22 +197,10 @@ function Body() {
             if (!gameOver) {
                 const getRandomNum = () => Math.floor(Math.random() * 100);
                 let cellNum = null;
-                
-                console.log("Next cell's value is: " + shipToSink.nextCellToShoot);
 
-                if (shipToSink.nextCellToShoot !== null ) {
-                    cellNum = shipToSink.nextCellToShoot;
-                } else {
-                    cellNum = getRandomNum();
-                }
-
-                console.log("I aim to shoot: " + cellNum);
-
+                shipToSink.nextCellToShoot !== null ? cellNum = shipToSink.nextCellToShoot : cellNum = getRandomNum();
                 while (userCellsShot.includes(cellNum)) { cellNum = getRandomNum() }
                 userCellsShot.push(cellNum);
-
-                console.log("I am shooting: " + cellNum);
-
                 addHitOrMissMark(
                     "user", userCells[cellNum], userOccupiedCellsNums, userShipsInDockingArea, userShips, shipToSink, checkCellCoordinate, userCellsShot
                 );

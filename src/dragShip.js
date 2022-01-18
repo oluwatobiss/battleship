@@ -72,24 +72,17 @@ function dragShip(gameStarted, id, name, shipAxisPosition, shipCurrHeadCell, get
             checkIfAllProposedShipCellsNumsAreFree();
     
             if (somePropCellsNotFree) {
-                console.error("Cell Occupied = " + somePropCellsNotFree);
                 somePropCellsNotFree = false;
-    
                 shipAxisPosition.x = draggedShipCurrAxisPosition.x;
                 shipAxisPosition.y = draggedShipCurrAxisPosition.y;
-    
+
                 e.target.style.transform =
                 `translate(${draggedShipCurrAxisPosition.x}px, ${draggedShipCurrAxisPosition.y}px)`;
     
                 shipCurrHeadCell.num = draggedShipCurrHeadCellNum;
                 occupiedCellsNums[name] = getOccupiedCellsNums(draggedShipCurrHeadCellNum, name, orientation);
                 occupiedCellsCoords[name] = getOccupiedCellsCoords(draggedShipCurrHeadCellNum, name, orientation);
-            } else {
-                console.log("Cell Occupied = " + somePropCellsNotFree);
             }
-    
-            console.log(occupiedCellsNums[name]);
-            console.log(occupiedCellsCoords[name]);
         });
     }
 }
