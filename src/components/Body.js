@@ -35,9 +35,12 @@ const cruiserAxisPosition = { x: 0, y: 0 };
 const submarineAxisPosition = { x: 0, y: 0 };
 const destroyerAxisPosition = { x: 0, y: 0 };
 const shipToSink = {
-    shipSunk: false,
-    shipHit: false,
+    withinAreaFired: false,
+    numOfAttempts: 1,
     refCell: null,
+    nextCellToShoot: null,
+    shootDirection: null,
+    shipSunk: false,
 };
 const userOccupiedCellsNums = {
     aircraftCarrier: [],
@@ -190,7 +193,40 @@ function Body() {
             this.style.cursor = "";
         }
 
-        function shootShip() {
+        function pcShoots() {
+            if (!gameOver) {
+                const getRandomNum = () => Math.floor(Math.random() * 100);
+                let cellNum = null;
+                
+                console.log("Next cell's value is: " + shipToSink.nextCellToShoot);
+
+                if (shipToSink.nextCellToShoot !== null ) {
+                    cellNum = shipToSink.nextCellToShoot;
+                } else {
+                    cellNum = getRandomNum();
+                }
+
+                console.log("I aim to shoot: " + cellNum);
+
+                while (userCellsShot.includes(cellNum)) { cellNum = getRandomNum() }
+                userCellsShot.push(cellNum);
+
+                console.log("I am shooting: " + cellNum);
+
+                addHitOrMissMark(
+                    "user", userCells[cellNum], userOccupiedCellsNums, userShipsInDockingArea, userShips, shipToSink, checkCellCoordinate, userCellsShot
+                );
+                checkIfGameIsOver(userShipsInDockingArea);
+                if (gameOver) {
+                    messageBoard.style.backgroundColor = "#ffe0f0";
+                    messageBoard.style.borderColor = "red";
+                    gameInfo.style.color = "red";
+                    gameInfo.innerText = "Oops!!! You lost the Game!";
+                }
+            }
+        }
+
+        function userShoots() {
             if (gameStarted && !this.style.backgroundColor && !gameOver) {
                 addHitOrMissMark("pc", this, pcOccupiedCellsNums, pcShipsInDockingArea, pcShips);
                 checkIfGameIsOver(pcShipsInDockingArea);
@@ -200,23 +236,7 @@ function Body() {
                     gameInfo.style.color = "green";
                     gameInfo.innerText = "Congratulations!!! You won the Game!";
                 }
-                if (!gameOver) {
-                    const getRandomNum = () => Math.floor(Math.random() * 100);
-                    let cellNum = getRandomNum();
-            
-                    while (userCellsShot.includes(cellNum)) { cellNum = getRandomNum() }
-                    userCellsShot.push(cellNum);
-                    addHitOrMissMark(
-                        "user", userCells[cellNum], userOccupiedCellsNums, userShipsInDockingArea, userShips, userCellsShot, shipToSink, checkCellCoordinate
-                    );
-                    checkIfGameIsOver(userShipsInDockingArea);
-                    if (gameOver) {
-                        messageBoard.style.backgroundColor = "#ffe0f0";
-                        messageBoard.style.borderColor = "red";
-                        gameInfo.style.color = "red";
-                        gameInfo.innerText = "Oops!!! You lost the Game!";
-                    }
-                }
+                pcShoots();
             }
         }
 
@@ -227,7 +247,7 @@ function Body() {
         document.getElementById("destroyer").addEventListener("dblclick", changeDestroyerOrientation);
         pcCells.forEach(c => c.addEventListener("mouseenter", addBorder));
         pcCells.forEach(c => c.addEventListener("mouseleave", removeBorder));
-        pcCells.forEach(c => c.addEventListener("click", shootShip));
+        pcCells.forEach(c => c.addEventListener("click", userShoots));
 
         return () => {
             document.getElementById("aircraft-carrier").removeEventListener("dblclick", changeAircraftCarrierOrientation);
@@ -237,7 +257,7 @@ function Body() {
             document.getElementById("destroyer").removeEventListener("dblclick", changeDestroyerOrientation);
             pcCells.forEach(c => c.removeEventListener("mouseenter", addBorder));
             pcCells.forEach(c => c.removeEventListener("mouseleave", removeBorder));
-            pcCells.forEach(c => c.removeEventListener("click", shootShip));
+            pcCells.forEach(c => c.removeEventListener("click", userShoots));
         }
     }, [gameStarted])
     

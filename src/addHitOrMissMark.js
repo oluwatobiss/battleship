@@ -1,4 +1,4 @@
-function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea, ships) {
+function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea, ships, shipToSink, checkCellCoordinate, userCellsShot) {
     const cellFired = cellOwner === "pc" ? Number(cell.id.slice(8)) : Number(cell.id.slice(10));
     const shipsOccupiedCells = [...new Set([
         ...occupiedCellsNums.aircraftCarrier,
@@ -7,6 +7,15 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
         ...occupiedCellsNums.submarine,
         ...occupiedCellsNums.destroyer
     ])];
+
+    function resetShipToSinkObj() {
+        shipToSink.withinAreaFired = false;
+        shipToSink.numOfAttempts = 1;
+        shipToSink.refCell = null;
+        shipToSink.nextCellToShoot = null;
+        shipToSink.shootDirection = null;
+        shipToSink.shipSunk = false;
+    }
 
     if (shipsOccupiedCells.includes(cellFired)) {
         cell.style.backgroundColor = "#fd5e53";
@@ -20,16 +29,142 @@ function addHitOrMissMark(cellOwner, cell, occupiedCellsNums, shipsInDockingArea
                     if (ships[i].name === shipName) {
                         ships[i].life -= 1;
                         console.log("Life Remaining: " + ships[i].life);
-                    }
-                    // Notify if the fired ship has been sunk:
-                    if (ships[i].life === 0) {
-                        shipsInDockingArea[i].style.backgroundColor = "#fd5e53";
+                        // Notify if the fired ship has been sunk:
+                        if ((cellOwner === "pc") && (ships[i].life === 0)) {
+                            shipsInDockingArea[i].style.backgroundColor = "#fd5e53";
+                        }
+    
+                        if ((cellOwner === "user") && (ships[i].life === 0)) {
+                            console.log("Sunk turned true!!!")
+                            shipToSink.shipSunk = true;
+                            shipsInDockingArea[i].style.backgroundColor = "#fd5e53";
+                        }
                     }
                 }
             }
         }
-    } else {
+
+        if (cellOwner === "user") {
+            console.log("Attempts: " + shipToSink.numOfAttempts);
+            shipToSink.withinAreaFired = true;
+            if (shipToSink.numOfAttempts === 1) {
+                shipToSink.refCell = cellFired;
+                if ((!checkCellCoordinate(cellFired).includes("J"))) {
+                    if (!userCellsShot.includes(cellFired + 1)) {
+                        shipToSink.nextCellToShoot = cellFired + 1;
+                        shipToSink.shootDirection = "r";
+                    } else if (!userCellsShot.includes(cellFired - 1) && !checkCellCoordinate(cellFired).includes("A")) {
+                        shipToSink.nextCellToShoot = cellFired - 1;
+                        shipToSink.shootDirection = "l";
+                    } else if (!userCellsShot.includes(cellFired - 10) && ((cellFired - 10) >= 0)) {
+                        shipToSink.nextCellToShoot = cellFired - 10;
+                        shipToSink.shootDirection = "u";
+                    } else if (!userCellsShot.includes(cellFired + 10) && ((cellFired + 10) <= 99)) {
+                        shipToSink.nextCellToShoot = cellFired + 10;
+                        shipToSink.shootDirection = "d";
+                    }
+                } else if ((checkCellCoordinate(cellFired).includes("J"))) {
+                    if (!userCellsShot.includes(cellFired - 1)) {                        
+                        shipToSink.nextCellToShoot = cellFired - 1;
+                        shipToSink.shootDirection = "l";
+                    } else if (!userCellsShot.includes(cellFired - 10) && ((cellFired - 10) >= 0)) {                        
+                        shipToSink.nextCellToShoot = cellFired - 10;
+                        shipToSink.shootDirection = "u";
+                    } else if (!userCellsShot.includes(cellFired + 10) && ((cellFired + 10) <= 99)) {                        
+                        shipToSink.nextCellToShoot = cellFired + 10;
+                        shipToSink.shootDirection = "d";
+                    }
+                }
+            } else if ((shipToSink.numOfAttempts >= 2) && (shipToSink.shootDirection === "r")) {
+                if ((!checkCellCoordinate(cellFired).includes("J")) && (!userCellsShot.includes(cellFired + 1))) {
+                    shipToSink.nextCellToShoot = cellFired + 1;
+                } else if (!userCellsShot.includes(shipToSink.refCell - 1)) {
+                    if (checkCellCoordinate(cellFired).includes("J") || userCellsShot.includes(cellFired + 1)) {
+                        shipToSink.nextCellToShoot = shipToSink.refCell - 1;
+                        shipToSink.shootDirection = "l";
+                    }
+                }
+            } else if ((shipToSink.numOfAttempts >= 2) && (shipToSink.shootDirection === "l")) {
+                if ((!checkCellCoordinate(cellFired).includes("A")) && (!userCellsShot.includes(cellFired - 1))) {
+                    shipToSink.nextCellToShoot = cellFired - 1;
+                }
+            } else if ((shipToSink.numOfAttempts >= 2) && (shipToSink.shootDirection === "u")) {
+                if (((cellFired - 10) >= 0) && (!userCellsShot.includes(cellFired - 10))) {
+                    shipToSink.nextCellToShoot = cellFired - 10;
+                } else if (((cellFired - 10) <= 0) && (!userCellsShot.includes(shipToSink.refCell + 10))) {
+                    shipToSink.nextCellToShoot = shipToSink.refCell + 10;
+                    shipToSink.shootDirection = "d";
+                }
+            } else if ((shipToSink.numOfAttempts >= 2) && (shipToSink.shootDirection === "d")) {
+                if (((cellFired + 10) <= 99) && (!userCellsShot.includes(cellFired + 10))) {
+                    shipToSink.nextCellToShoot = cellFired + 10;
+                }
+            }
+
+            shipToSink.numOfAttempts += 1;
+            if (shipToSink.shipSunk) {
+                console.log(shipToSink);
+                resetShipToSinkObj();
+                console.log(shipToSink);
+            }
+
+            console.log("Next Cell To Shoot: " + shipToSink.nextCellToShoot);
+        }
+    }
+    
+    if (!shipsOccupiedCells.includes(cellFired)) {
         cell.style.backgroundColor = "#bcd4e6";
+
+        if ((cellOwner === "user") && shipToSink.withinAreaFired) {
+            if ((shipToSink.numOfAttempts >= 2) && (shipToSink.shootDirection === "r")) {
+                if (!checkCellCoordinate(shipToSink.refCell).includes("A")) {
+                    if (!userCellsShot.includes(shipToSink.refCell - 1)) {
+                        console.log(checkCellCoordinate(shipToSink.refCell));
+                        console.log(shipToSink.refCell - 1);
+                        shipToSink.nextCellToShoot = shipToSink.refCell - 1;
+                        shipToSink.shootDirection = "l";
+                    } else if (userCellsShot.includes(shipToSink.refCell - 1) && !userCellsShot.includes(shipToSink.refCell - 10)) {
+                        console.log(checkCellCoordinate(shipToSink.refCell));
+                        console.log(shipToSink.refCell - 10);
+                        shipToSink.nextCellToShoot = shipToSink.refCell - 10;
+                        shipToSink.shootDirection = "u";
+                    } else if (userCellsShot.includes(shipToSink.refCell - 1) && !userCellsShot.includes(shipToSink.refCell - 10)) {
+                        console.log(checkCellCoordinate(shipToSink.refCell));
+                        console.log(shipToSink.refCell + 10);
+                        shipToSink.nextCellToShoot = shipToSink.refCell + 10;
+                        shipToSink.shootDirection = "d";
+                    }
+                } else if (checkCellCoordinate(shipToSink.refCell).includes("A")) {
+                    if (!userCellsShot.includes(shipToSink.refCell - 10) && ((shipToSink.refCell - 10) >= 0)) {
+                        console.log(checkCellCoordinate(shipToSink.refCell));
+                        console.log(shipToSink.refCell - 10);
+                        shipToSink.nextCellToShoot = shipToSink.refCell - 10;
+                        shipToSink.shootDirection = "u";
+                    } else if (!userCellsShot.includes(shipToSink.refCell + 10) && ((shipToSink.refCell + 10) <= 99)) {
+                        console.log(checkCellCoordinate(shipToSink.refCell));
+                        console.log(shipToSink.refCell + 10);
+                        shipToSink.nextCellToShoot = shipToSink.refCell + 10;
+                        shipToSink.shootDirection = "d";
+                    }
+                }
+            } else if ((shipToSink.numOfAttempts >= 2) && (shipToSink.shootDirection === "l")) {
+                if (((shipToSink.refCell - 10) >= 0) && (!userCellsShot.includes(shipToSink.refCell - 10))) {
+                    shipToSink.nextCellToShoot = shipToSink.refCell - 10;
+                    shipToSink.shootDirection = "u";
+                } else if (((shipToSink.refCell + 10) <= 99) && (!userCellsShot.includes(shipToSink.refCell + 10))) {
+                    shipToSink.nextCellToShoot = shipToSink.refCell + 10;
+                    shipToSink.shootDirection = "d";
+                }
+            } else if ((shipToSink.numOfAttempts >= 2) && (shipToSink.shootDirection === "u")) {
+                if (((shipToSink.refCell + 10) <= 99) && (!userCellsShot.includes(shipToSink.refCell + 10))) {
+                    shipToSink.nextCellToShoot = shipToSink.refCell + 10;
+                    shipToSink.shootDirection = "d";
+                }
+            }
+
+            shipToSink.numOfAttempts += 1;
+            console.log("Next Cell To Shoot: " + shipToSink.nextCellToShoot);
+        }
     }
 }
 
